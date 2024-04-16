@@ -1,0 +1,43 @@
+
+% imagen
+\begin{figure}[!htbp]
+\includegraphics[scale=..., trim=..., clip]{/files/src/.media/...}
+\caption{...} \label{...}
+\end{figure}
+
+% muchas imagenes
+\begin{figure}[!htbp]
+    \ContinuedFloat
+    \centering
+    \subfloat[pie ...]{\includegraphics[width=.25\textwidth]{/files/src/.media/...}}\hfill
+    ...
+    \\[\smallskipamount]
+    ...
+    \caption{...} \label{...}
+\end{figure}
+
+% tabla
+\begin{figure}[!htbp]
+    \begin{tabular}{ |l|c|c| } 
+    \hline
+    ...                    & \multicolumn{2}{c|}{...} \\  % por ejemplo
+    \hline
+    ...
+    \hline
+    \end{tabular} \\
+    \bigskip
+    \caption{...} \label{...}
+\end{figure}
+
+% notas al pie de pagina
+\footnote{...}
+\footenotemark + \footnotetext{}
+
+% citas
+\cite{Ejemplo}
+
+% codigo
+\lstinputlisting[mathescape=true, escapechar=@, language=pseudo, label=..., caption={...}]{files/src/.code/...}
+
+% en header, si una palabra se divide mal, agregar
+\hyphenation{...}

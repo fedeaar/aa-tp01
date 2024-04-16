@@ -1,0 +1,1 @@
+acá va pseudocódigo
