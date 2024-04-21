@@ -1,6 +1,6 @@
 from abc import ABC, abstractmethod
 from typing_extensions import Self
-from sklearn.base import BaseEstimator, clone
+from sklearn.base import BaseEstimator
 from sklearn.tree import DecisionTreeClassifier
 import numpy as np
 
@@ -41,4 +41,3 @@ class DecisionTree(EstimatorWrapper):
 
     def decision(self, X: np.ndarray) -> np.ndarray:
         return self.estimator.predict_proba(X)[:, 1]
-    

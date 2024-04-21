@@ -1,7 +1,8 @@
 from utils.estimators import EstimatorWrapper
 from typing import Tuple, Callable
 import numpy as np
-from sklearn.model_selection import StratifiedKFold, BaseCrossValidator
+import pandas as pd 
+from sklearn.model_selection import BaseCrossValidator
 
 
 #
@@ -14,22 +15,33 @@ def cross_validate(
     y: np.ndarray, 
     metric: Callable[[np.ndarray, np.ndarray], float],
     use_decision: bool,
-    cv: BaseCrossValidator = StratifiedKFold(n_splits=5, shuffle=True)
-) -> Tuple[np.ndarray, np.ndarray, np.ndarray]:
+    cv: BaseCrossValidator,
+) -> Tuple[pd.DataFrame, np.ndarray]:
     """
     Params
-    -------
+    ------
     use_decision : bool
         should metric be called with estimator's .predict or .decision output
     
     Returns
     -------
-    split_metrics_train: np.ndarray
-        each cross-validation model's evaluated metric on its train set
+    results : pd.DataFrame
+        pandas DataFrame with columns:
+            mean_val : float
+                the mean value of split_metrics_val
 
-    split_metrics_val : np.ndarray
-        each cross-validation model's evaluated metric on its validation set
+            mean_train : float
+                the mean value of split_metrics_train
+
+            tot_val : float
+                the evaluation of the metric on y and y_pred
     
+            split_metrics_val_[0:k) : float
+                each cross-validation model's evaluated metric on its validation set
+    
+            split_metrics_train_[0:k): float
+                each cross-validation model's evaluated metric on its train set
+
     y_pred : np.ndarray
         the whole prediction / decision results on validation. ie. each 
         instance's prediction / decision value from the cross-validation model 
@@ -55,7 +67,17 @@ def cross_validate(
         split_metrics_val[idx] = metric(y_val, pred_val)
         y_pred[test_idx] = pred_val
 
-    return \
-        split_metrics_train,\
-        split_metrics_val,\
-        y_pred
+    data = np.hstack((np.array([
+        split_metrics_val.mean(),
+        split_metrics_train.mean(),
+        metric(y, y_pred)
+    ]), split_metrics_val, split_metrics_train)).reshape((1, 3+2*k))
+    result = pd.DataFrame(
+        data,
+        index=[metric.__name__],
+        columns=["mean_val", "mean_train", "tot_val"] + \
+            [f"split_val_{i}" for i in range(k)] + \
+            [f"split_train_{i}" for i in range(k)]
+    )
+
+    return result, y_pred
