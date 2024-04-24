@@ -21,6 +21,12 @@
 \tableofcontents
 \newpage
 
+% introduccion
+\addtocontents{toc}{\protect\setcounter{tocdepth}{0}}
+\section*{Introducción}
+\addtocontents{toc}{\protect\setcounter{tocdepth}{3}}
+\input{files/src/introduccion.tex}
+
 % apendice
 % \section{Apéndice}
 % \input{files/src/apendice.tex}
