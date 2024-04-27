@@ -17,4 +17,4 @@ def auprc(y_true: np.ndarray, y_prob: np.ndarray) -> float:
 
 def aucroc(y_true: np.ndarray, y_prob: np.ndarray) -> float:
     fpr, recall, _ = roc_curve(y_true, y_prob)
-    return auc(recall, fpr)
+    return auc(fpr, recall)

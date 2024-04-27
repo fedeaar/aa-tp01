@@ -18,20 +18,33 @@
 % \newpage
 
 % contenido
+\vspace{1em}
 \tableofcontents
 \newpage
 
-% introduccion
-\addtocontents{toc}{\protect\setcounter{tocdepth}{0}}
-\section*{Introducción}
-\addtocontents{toc}{\protect\setcounter{tocdepth}{3}}
-\input{files/src/introduccion.tex}
-
-% introduccion
-\addtocontents{toc}{\protect\setcounter{tocdepth}{0}}
-\section*{Separación de Datos}
-\addtocontents{toc}{\protect\setcounter{tocdepth}{3}}
+% separación de datos
+\section{Separación de Datos}
 \input{files/src/separacion.tex}
+
+% construcción de un modelo simple
+\section{Construcción de modelos}
+\input{files/src/modelo-simple.tex}
+
+\vspace{1em}
+\section{Comparación de algoritmos}
+\input{files/src/algoritmos.tex}
+
+\vspace{1em}
+\section{Diagnóstico Sesgo-Varianza}
+\input{files/src/sesgo-varianza.tex}
+
+\vspace{1em}
+\section{Evaluación de performance}
+\input{files/src/performance.tex}
+
+\vspace{1em}
+\section{Conclusiones}
+\input{files/src/conclusiones.tex}
 
 % apendice
 % \section{Apéndice}
