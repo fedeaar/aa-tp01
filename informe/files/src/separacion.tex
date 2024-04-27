@@ -1,0 +1,22 @@
+Lo primero a hacer al construir un modelo de aprendizaje automático es un preprocesamiento de los datos. Esta tarea es crucial para estimar correctamente la performance de nuestro modelo final, y a su vez entrenarlo con datos lo más fieles posibles a su distribución subyacente. 
+
+La idea principal es separar los datos en dos conjuntos. Por un lado, un set de entrenamiento que será utilizado para generar los distintos modelos a lo largo de la investigación. Por el otro, un conjunto de evaluación, usado para medir la performance del modelo final resultante. Esta evaluación del modelo solo se relizará \textbf{una vez} para obtener métricas lo más cercanas a su rendimiento en la vida real. Idealmente, este último conjunto representa un $10-20\%$ de la totalidad de los datos.
+
+De no dividir los datos de esta forma, se evaluaría el rendimiento del modelo resultante con la misma información que se utilizó para entrenarlo. Esto es mala idea ya que, por la misma naturaleza de los modelos, estos se acoplan en cierta medida a los datos con los que fueron entrenados. Luego, al evaluarlos con estas mismas instancias sobreestimaríamos su performance.
+
+Sabiendo que tenemos que realizar estos splits, ¿qué instancias se deberían de incluir en cada uno? Para esto hay que tener en cuenta dos factores:
+
+\begin{itemize}
+    \item La proporción de las instancias por clase debe de ser similar en cada split a la del dataset entero.
+    \item La división debe de ser realizada al azar para evitar cualquier estructura subyacente en los datos.
+\end{itemize}
+
+Con esto en mente, procedimos a separar los datos de la siguiente forma:
+
+\begin{enumerate}
+    \item Dividimos el dataset $D$ separando las instancias positivas --\textit{buen pronóstico}-- de las negativas --\textit{mal pronóstico}-- y luego las desordenamos al azar, $D \rightarrow (P, N)$.
+    \item Separamos el último $10\%$ de cada lista obteniendo los datos de entrenamiento y evaluación, $P \rightarrow (P_{train}, P_{test})$ y $N \rightarrow (N_{train}, N_{test})$.
+    \item Obtenemos los conjuntos finales concatenando las listas del mismo tipo y nuevamente desordenándolas al azar, $(D_{train}, D_{test}) = (P_{train} \cup N_{train},\ P_{test} \cup N_{test})$.
+\end{enumerate}
+
+Es importante agregar que, para poder replicar la misma separción azarosa de las instancias, se utilizó una \textit{seed} fija cada vez que se desordenaban los conjuntos.
