@@ -1,22 +1,42 @@
-Lo primero a hacer al construir un modelo de aprendizaje automático es un preprocesamiento de los datos. Esta tarea es crucial para estimar correctamente la performance de nuestro modelo final, y a su vez entrenarlo con datos lo más fieles posibles a su distribución subyacente. 
+Previo a realizar cualquier tipo de análisis, realizaremos un preprocesamiento de los datos. Esta tarea es crucial, ya que  permitirá estimar correctamente el poder de generalización del modelo final\footnote{Esta heurística se basa en la suposición que cualquier evaluación realizada con información accesible durante el entrenamiento puede llevar a sobreestimar la performance verdadera de un modelo, por lo que debe haber una separación entre los datos usados para la evaluación y los datos usados para el entrenamiento.}. Así también, el preprocesamiento permitirá garantizar que el entrenamiento se realice con datos lo más fieles posibles a la distribución subyacente verdadera de las clases de interés\footnote{Bajo la suposición que el dataset original es representativo de esta distribución.}. 
 
-La idea principal es separar los datos en dos conjuntos. Por un lado, un set de entrenamiento que será utilizado para generar los distintos modelos a lo largo de la investigación. Por el otro, un conjunto de evaluación, usado para medir la performance del modelo final resultante. Esta evaluación del modelo solo se relizará \textbf{una vez} para obtener métricas lo más cercanas a su rendimiento en la vida real. Idealmente, este último conjunto representa un $10-20\%$ de la totalidad de los datos.
+La idea principal es separar los datos en dos conjuntos. Por un lado, un set de entrenamiento que será utilizado para entrenar los distintos modelos a lo largo de la investigación. Por el otro, un set de evaluación, usado para medir la performance del modelo final resultante. Esta evaluación se relizará \textit{una sola vez} para garantizar que las métricas obtenidas sean lo más cercanas posible al rendimiento real\footnote{De realizar esta evaluación de manera reiterada, estaríamos \textit{filtrando} datos a la etapa de entrenamiento, ya que tendríamos información sobre el comportamiento del conjunto de evaluación.}.
 
-De no dividir los datos de esta forma, se evaluaría el rendimiento del modelo resultante con la misma información que se utilizó para entrenarlo. Esto es mala idea ya que, por la misma naturaleza de los modelos, estos se acoplan en cierta medida a los datos con los que fueron entrenados. Luego, al evaluarlos con estas mismas instancias sobreestimaríamos su performance.
+Consideramos que una buena partición, para la cantidad de datos con los que contamos, reserva entre el $10\%$ y el $20\%$ del dataset para la evaluación final, respetando la distribución de clases original en cada subconjunto. Esto se debe a que importa también maximizar la cantidad de información con la que contamos durante el entrenamiento.
 
-Sabiendo que tenemos que realizar estos splits, ¿qué instancias se deberían de incluir en cada uno? Para esto hay que tener en cuenta dos factores:
+Notar que, de no dividir los datos, la única opción para evaluar el rendimiento del modelo final sería utilizar los mismos datos que se utilizaron para entrenarlo. Esto es mala idea, ya que, por la misma naturaleza de los modelos, estos se acoplan en cierta medida a los datos con los que fueron entrenados. Por ejemplo, basta con que el modelo memorice las instancias de entrenamiento para obtener un rendimiento óptimo.
+
+¿Qué instancias deberíamos incluir en cada subconjunto? Tuvimos en cuenta los siguientes factores:
 
 \begin{itemize}
-    \item La proporción de las instancias por clase debe de ser similar en cada split a la del dataset entero.
-    \item La división debe de ser realizada al azar para evitar cualquier estructura subyacente en los datos.
+    \item La proporción de las instancias por clase debe de ser similar en cada subconjunto a la del dataset entero.
+    \item La división debe ser realizada al azar para evitar cualquier estructura subyacente en los datos.
+    \item Podemos asumir que los datos son independientes, en tanto sabemos que dos mediciones de RNA distintas provienen de pacientes diferentes. 
 \end{itemize}
 
-Con esto en mente, procedimos a separar los datos de la siguiente forma:
+Con esto en mente, procedimos a separar los datos de la siguiente manera\footnote{Ver la función \textit{train\_test\_split} en el notebook.}:
 
 \begin{enumerate}
-    \item Dividimos el dataset $D$ separando las instancias positivas --\textit{buen pronóstico}-- de las negativas --\textit{mal pronóstico}-- y luego las desordenamos al azar, $D \rightarrow (P, N)$.
-    \item Separamos el último $10\%$ de cada lista obteniendo los datos de entrenamiento y evaluación, $P \rightarrow (P_{train}, P_{test})$ y $N \rightarrow (N_{train}, N_{test})$.
-    \item Obtenemos los conjuntos finales concatenando las listas del mismo tipo y nuevamente desordenándolas al azar, $(D_{train}, D_{test}) = (P_{train} \cup N_{train},\ P_{test} \cup N_{test})$.
+    \item Dividimos el dataset $D$ entre instancias positivas ---\textit{buen pronóstico} $=1$--- y negativas ---\textit{mal pronóstico} $=0$---. Las desordenamos al azar con un algoritmo de shuffle\footnote{Usamos el generador \textit{default\_rng} de \textit{numpy.random}, con un valor de semilla para permitir la reproducción de los resultados.}: $$D \rightarrow (P, N)$$
+    \item Separamos el último $10\%$ de cada grupo, obteniendo los datos de entrenamiento y evaluación: $$P \rightarrow (P_{train}, P_{test})\ \ \ \text{y}\ \ \ N \rightarrow (N_{train}, N_{test})$$.
+    \item Obtuvimos los conjuntos finales concatenando las listas del mismo tipo y, nuevamente, los desordenamos al azar: $$(D_{train}, D_{test}) = (P_{train} \cup N_{train},\ P_{test} \cup N_{test})$$
 \end{enumerate}
 
-Es importante agregar que, para poder replicar la misma separción azarosa de las instancias, se utilizó una \textit{seed} fija cada vez que se desordenaban los conjuntos.
+\vspace{0.5em}
+La división se puede observar en la Figura \ref{distribucion}. Las probabilidades fueron truncadas, en vez de redondeadas, para capturar las pequeñas variaciones existentes. El valor de semilla utilizado fue $s = \text{0x2031}$, el mismo se utilizará para controlar todos los procesos aleatorios a lo largo de este trabajo.
+
+\vspace{0.5em}
+\begin{figure}[!htbp]
+    \begin{center}
+        \begin{tabular}{ |c|c|c|c| } 
+         \hline
+                    & $D$      & $D_{train}$ & $D_{test}$ \\
+        \hline
+        $P(y=1)$   & $0.3140$ & $0.3140$    & $0.3137$   \\ 
+        $P(y=0)$   & $0.6860$ & $0.6859$    & $0.6862$   \\ 
+        $n$        & $500$    & $449$       & $51$       \\ 
+        \hline
+        \end{tabular}
+    \end{center}
+    \caption{Distribución de clases y tamaños del split del dataset $D$ en entrenamiento ---$D_{train}$--- y evaluación ---$D_{test}$---.} \label{distribucion}
+\end{figure}
