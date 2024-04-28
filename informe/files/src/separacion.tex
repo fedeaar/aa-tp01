@@ -2,9 +2,9 @@ Previo a realizar cualquier tipo de análisis, realizaremos un preprocesamiento 
 
 La idea principal es separar los datos en dos conjuntos. Por un lado, un set de entrenamiento que será utilizado para entrenar los distintos modelos a lo largo de la investigación. Por el otro, un set de evaluación, usado para medir la performance del modelo final resultante. Esta evaluación se relizará \textit{una sola vez} para garantizar que las métricas obtenidas sean lo más cercanas posible al rendimiento real\footnote{De realizar esta evaluación de manera reiterada, estaríamos \textit{filtrando} datos a la etapa de entrenamiento, ya que tendríamos información sobre el comportamiento del conjunto de evaluación.}.
 
-Consideramos que una buena partición, para la cantidad de datos con los que contamos, reserva entre el $10\%$ y el $20\%$ del dataset para la evaluación final, respetando la distribución de clases original en cada subconjunto. Esto se debe a que importa también maximizar la cantidad de información con la que contamos durante el entrenamiento.
+Consideramos que una buena partición, para la cantidad de datos con los que contamos, reserva entre el $10\%$ y el $20\%$ del dataset para la evaluación final, respetando la distribución de clases original en cada subconjunto. Si bien interesa reservar datos para la evaluación, también importa maximizar la cantidad de información con la que contamos durante el entrenamiento.
 
-Notar que, de no dividir los datos, la única opción para evaluar el rendimiento del modelo final sería utilizar los mismos datos que se utilizaron para entrenarlo. Esto es mala idea, ya que, por la misma naturaleza de los modelos, estos se acoplan en cierta medida a los datos con los que fueron entrenados. Por ejemplo, basta con que el modelo memorice las instancias de entrenamiento para obtener un rendimiento óptimo.
+Notar que, de no dividir los datos, la única opción para evaluar el rendimiento del modelo sería utilizar los mismos datos que se utilizaron para entrenarlo. Esto es mala idea, ya que, por la misma naturaleza de los modelos, estos se acoplan en cierta medida a los datos con los que fueron entrenados. Luego, bastaría con que el modelo memorice las instancias de entrenamiento para obtener un rendimiento óptimo.
 
 ¿Qué instancias deberíamos incluir en cada subconjunto? Tuvimos en cuenta los siguientes factores:
 

@@ -58,14 +58,13 @@ $\Phi$      & -         & $0.6904$      & -         & $0.5478$      & -         
 
 Es interesante notar que \textit{accuracy} obtuvo un valor más alto que \textit{auprc} y \textit{aucroc} en validación. Esto puede dar cuenta de la incapacidad de \textit{accuracy} para capturar el efecto de los distintos tipos de errores en un problema con clases desbalanceadas. También, parece interesante que \textit{accuracy} obtuvo en validación resultados más variados que las otras métricas. 
 
-Un detalle importante en la interpretación de estos resultados, creemos, es la importancia sobre la decisión de \textit{cuál es la clase positiva}. En particular, \textit{auprc} está sesgado hacia el comportamiento de la clase positiva, mientras que \textit{aucroc} es más imparcial \cite{Saito}. Por otro lado, \textit{auprc} se considera mejor para problemas desbalanceados que \textit{aucroc} \cite{Saito}. Sin embargo, dado que es de interés para el problema el ---\textit{mal pronóstico}---, consideramos que \textit{aucroc} es una medida adecuada.
+Un detalle importante en la interpretación de estos resultados, creemos, es la importancia sobre la decisión de \textit{cuál es la clase positiva}. En particular, \textit{auprc} está sesgado hacia el comportamiento de la clase positiva, mientras que \textit{aucroc} es más imparcial \cite{Saito}. Por otro lado, \textit{auprc} se considera mejor para problemas desbalanceados que \textit{aucroc} \cite{Saito}. Sin embargo, dado que es de interés para el problema el ---\textit{mal pronóstico}---, consideramos que \textit{aucroc} es la medida más adecuada de las tres.
 
 \subsection{En búsqueda de mejores hiperparámetros}
 
 Dados los resultados obtenidos, parece interesante explorar otros hiperparámetros para estimar qué tan capaces pueden llegar a ser los \textit{árboles de decisión} para el problema bajo estudio. Para ello, realizaremos una primer búsqueda en cuadrícula con algunos hiperparámetros provistos por la cátedra. En la próxima sección lo complementaremos con una búsqueda aleatoria más extensiva.
 
-En este caso, evaluaremos cada set de hiperparámetros $hs$ en la Figura \ref{grid_search}, aplicando $5$-fold cross-validation estratificado con métrica \textit{accuracy} promedio\footnote{Por decisión de la cátedra para este ejercicio.}. La Figura \ref{grid_search} resume los resultados. 
-
+En este caso, evaluaremos cada set de hiperparámetros $hs$ en la Figura \ref{grid_search}, aplicando $5$-fold cross-validation estratificado con métrica \textit{accuracy} promedio\footnote{Por decisión de la cátedra para este ejercicio.}.
 \vspace{0.5em}
 \begin{figure}[!htbp]
     \begin{center}
