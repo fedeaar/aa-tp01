@@ -36,12 +36,43 @@ La Figura \ref{random_tree} muestra los $5$ mejores candidatos obtenidos. Los re
 Si bien el criterio de corte influye, la similitud entre Gini y Entropía llevan a intuir que fue la limitación en la cantidad máxima de atributos a considerar la que llevó a una mejora sustancial con respecto al modelo de la Sección \ref{simple}. Esto puede deberse a que limita la influencia de los atributos más importantes durante la construcción del árbol.
 
 \subsection{k-nearest neighbours}
-\subsection{linear discriminant analysis}
-La busqueda de hiperparametros se llevo a cabo con el clasificador \textit{LinearDiscriminantAnalysis} de \textit{scikit-learn} usamos los siguientes hiperparámetros: 
+Para el clasificador \textit{KNeighborsClassifier} de \textit{scikit-learn}, usamos los hiperparámetros:
 
 \begin{itemize}
-    \item Solver: Permitimos los algoritmos basados en $LSQR$, $SVD$ y $EIGEN$.
-    \item El metodo de contraccion: Cuando no se este usando Solver=SVD, permitimos que siga una distribucion $Uniforme(0,1)$.
+    \item Cantidad de vecinos más cercanos: Permitimos una distribución \textit{LogUniform(10,N/2)}, donde \textit{N} es la cantidad de instancias de $D_{train}$ y 10 porque para valores más bajos no encontramos evidencia empírica que mejore la performance. 
+    \item Eleccion de pesos por vecino: Permitimos \textit{Uniform} donde cada instancia se pondera por igual, u \textit{Distance} donde los vecinos más cercanos tendrán un peso más determinante que los demás.
+    \item Eleccion de metrica: Permitimos que se usen las métricas usuales \textit{l1}, \textit{l2}, \textit{l3} y \textit{l4}. 
+\end{itemize}
+
+Optamos por usar una distribución \textit{LogUniforme}, para la elección de $k$, pues es conveniente no obtener valores demasiado grandes pues puede conducir al overfitting, considerando que estamos generando 100 muestras de dicha distribución sumado a la cota inferior adecuada podemos controlar el underfitting. 
+\vspace{0.5em}
+\begin{figure}[!htbp]
+    \begin{center}
+        \begin{tabular}{ |c|c|c|c| } 
+         \hline
+        N   & Eleccion de pesos & P  & aucroc (validación) \\
+        \hline
+        $15$             & Distance          &  $1$             & $0.8391$  \\ 
+        $11$             & Distance          &  $1$             & $0.8386$  \\
+        $14$             & Distance          &  $1$             & $0.8375$  \\ 
+        $13$             & Distance          &  $1$             & $0.8360$  \\
+        $26$             & Distance          &  $1$             & $0.8287$  \\ 
+        \hline
+        \end{tabular}
+    \end{center}
+    \caption{mejores resultados para la búsqueda aleatoria de hiperparámetros para \textit{k-nearest neighbours}.} \label{knn}
+\end{figure}
+
+Se identificó que la elección de pesos ponderados basados en la distancia, combinados con la métrica 1 (distancia de Manhattan), demostró ser óptima para el problema en cuestión. Este enfoque resalta la relevancia de considerar la estructura de los datos y la proximidad entre las muestras para una predicción precisa.
+Además, la búsqueda aleatoria permitió determinar un rango apropiado de vecinos, comprendido entre 11 y 30. Esta selección se basó en la necesidad de encontrar un equilibrio entre el sesgo y la varianza del modelo, asegurando una adecuada capacidad de generalización a nuevas instancias.
+Estos hallazgos subrayan la importancia de un enfoque sistemático en la selección de hiperparámetros, destacando cómo una exploración cuidadosa puede conducir a mejoras significativas en el rendimiento predictivo del modelo KNN.
+
+\subsection{linear discriminant analysis}
+La busqueda, para el clasificador \textit{LinearDiscriminantAnalysis} de \textit{scikit-learn} fue llevada a cabo con los siguientes hiperparámetros: 
+
+\begin{itemize}
+    \item Solver: Permitimos los algoritmos basados en \textit{LSQR}, \textit{SVD} y \textit{EIGEN}.
+    \item El metodo de contraccion: Cuando no se este usando SVD, permitimos que siga una distribucion $Uniforme(0,1)$.
 \end{itemize}
 
 Se exploraron otros hiperparámetros, pero optamos por no agregarlos debido a que no parecian influir de forma significativa en los resultados finales. 
@@ -61,10 +92,10 @@ Se exploraron otros hiperparámetros, pero optamos por no agregarlos debido a qu
         \hline
         \end{tabular}
     \end{center}
-    \caption{Mejores resultados para la búsqueda aleatoria de hiperparámetros para \textit{Linear Discriminant Analysis}.} \label{random_tree}
+    \caption{Mejores resultados para la búsqueda aleatoria de hiperparámetros para \textit{linear discriminant analysis}.} \label{lda}
 \end{figure}
 
-La eleccion del Solver Eigen o Lsqr, pareciera no influir pues es mas determinante usar un parametro de contraccion, el uso de svd da como resultado una peor performance. 
+La eleccion del Solver Eigen o Lsqr, pareciera no influir pues es mas determinante usar un parametro de contraccion adecuado, el uso de svd da como resultado una peor performance. 
 \subsection{support vector machines}
 
 \subsection{naïve bayes}
