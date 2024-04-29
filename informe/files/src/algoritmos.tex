@@ -37,5 +37,34 @@ Si bien el criterio de corte influye, la similitud entre Gini y Entropía llevan
 
 \subsection{k-nearest neighbours}
 \subsection{linear discriminant analysis}
+La busqueda de hiperparametros se llevo a cabo con el clasificador \textit{LinearDiscriminantAnalysis} de \textit{scikit-learn} usamos los siguientes hiperparámetros: 
+
+\begin{itemize}
+    \item Solver: Permitimos los algoritmos basados en $LSQR$, $SVD$ y $EIGEN$.
+    \item El metodo de contraccion: Cuando no se este usando Solver=SVD, permitimos que siga una distribucion $Uniforme(0,1)$.
+\end{itemize}
+
+Se exploraron otros hiperparámetros, pero optamos por no agregarlos debido a que no parecian influir de forma significativa en los resultados finales. 
+
+\vspace{0.5em}
+\begin{figure}[!htbp]
+    \begin{center}
+        \begin{tabular}{ |c|c|c|c| } 
+         \hline
+        Solver   & Shrinkage & auc-roc (validación) \\
+        \hline
+        eigen                   &  0.270007          & $0.8648$  \\ 
+        lsqr                    &  0.272309          & $0.8648$  \\
+        lsqr                    &  0.266565          & $0.8648$  \\ 
+        lsqr                    &  0.274341          & $0.8647$  \\
+        eigen                   &  0.288274          & $0.8645$  \\ 
+        \hline
+        \end{tabular}
+    \end{center}
+    \caption{Mejores resultados para la búsqueda aleatoria de hiperparámetros para \textit{Linear Discriminant Analysis}.} \label{random_tree}
+\end{figure}
+
+La eleccion del Solver Eigen o Lsqr, pareciera no influir pues es mas determinante usar un parametro de contraccion, el uso de svd da como resultado una peor performance. 
 \subsection{support vector machines}
+
 \subsection{naïve bayes}
