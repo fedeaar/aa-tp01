@@ -6,8 +6,8 @@ La búsqueda se realizará con \textit{RandomizedSearchCV} de \textit{scikit-lea
 Realizamos una última búsqueda de hiperparámetros prometedores para los \textit{árboles de decisión}. La misma se llevó a cabo con el clasificador \textit{DecisionTreeClassifier} de \textit{scikit-learn} para los siguientes hiperparámetros y rangos: 
 
 \begin{itemize}
-    \item El criterio de corte: permitimos todos los criterios implementados por el algoritmo. Estos son \textit{Gini}, \textit{Entropy} y \textit{Log loss}.
-    \item La profundidad máxima: permitimos que varie de manera uniforme en el rango $[3.\ \lfloor\sqrt{n} \rfloor]$, con $n=451$ la cantidad de instancias en $D_{train}$, bajo la suposición que un árbol \textit{corto} es preferible tanto a un \textit{stump} como a un árbol profundo. 
+    \item El criterio de corte: permitimos todos los criterios implementados por el algoritmo. Estos son \textit{Gini}, \textit{Entropy} y \textit{Log loss}. 
+    \item La profundidad máxima: permitimos que varie en el rango $[3,\ \lfloor\sqrt{n} \rfloor]$ de manera uniforme, con $n=451$ la cantidad de instancias en $D_{train}$, bajo la suposición que un árbol \textit{corto} es preferible tanto a un \textit{stump} como a un árbol profundo.
     \item La cantidad de atributos máxima a considerar por corte: permitimos que varíe de manera uniforme sobre $[1, p]$, con $p = 200$ la cantidad total de atributos en $D_{train}$.
 \end{itemize}
 
@@ -68,3 +68,34 @@ La eleccion del Solver Eigen o Lsqr, pareciera no influir pues es mas determinan
 \subsection{support vector machines}
 
 \subsection{naïve bayes}
+Se examinó por último el rendimiento del clasificador \textit{GaussianNB} de \textit{scikit-learn}. Los hiperparámetros de este algoritmo a optimizar y sus rangos fueron:
+
+\begin{itemize}
+    \item Las probabilidades a priori de las clases: permitimos que varíen de manera normal con \textit{media} igual a las probabilidades a priori empíricas (ver Figura \ref{distribucion}) y una \textit{desviación estándar} de $\sigma = 0.1$.
+    \item El suavizado de varianza: permitimos que varíe uniformemente en el rango $[0, 1 \times 10^{-2}]$.
+\end{itemize}
+
+Como valor predeterminado, \textit{GaussianNB} considera las \textit{probabilidades a priori} de cada clase como sus respectivas proporciones en el dataset. Para ampliar el rango de búsqueda, en lugar de usar las probabilidades originales se utilizaron valores aleatorios cercanos a estas.
+
+Por otro lado, el \textit{suavizado de varianza} indica la cantidad que se suma a todas las varianzas de los atributos para evitar que sean cero\footnote{Su valor representa el porcentaje de la varianza más alta a sumarle a todas las demás.}, lo cual podría producir errores numéricos durante el cálculo de las distribuciones normales. Aunque tiene un valor predeterminado de $1 \times 10^{-9}$, probamos con números al azar hasta $1 \times 10^{-2}$.
+
+Al observar la Figura \ref{naive_bayes}, podemos destacar dos hallazgos interesantes. En primer lugar, parece que el algoritmo tiene baja varianza, ya que al cambiar significativamente las proporciones de las etiquetas su capacidad predictiva se mantiene estable. Por otro lado, da la impresión de que el mejor valor para el suavizado de la varianza de los atributos se encuentra cerca de la cota superior de la búsqueda, es decir, $1 \times 10^{-2}$. Al dejar su valor predeterminado de $1 \times 10^{-9}$, el mejor puntaje obtenido fue de $0.785$, aproximadamente un $7\%$ de reducción respecto a los de la tabla.
+
+\vspace{0.5em}
+\begin{figure}[!htbp]
+    \begin{center}
+        \begin{tabular}{ |c|c|c|c| } 
+         \hline
+        $P(Y=0)$ & $P(Y=1)$ & Suavizado & aucroc (validación) \\
+        \hline
+        $0.6320$ & $0.3680$ & $0.975 \times 10^{-2}$ & $0.8408$ \\ 
+        $0.6119$ & $0.3881$ & $0.973 \times 10^{-2}$ & $0.8408$  \\
+        $0.6579$ & $0.3421$ & $0.982 \times 10^{-2}$ & $0.8406$  \\ 
+        $0.8183$ & $0.1817$ & $0.980 \times 10^{-2}$ & $0.8406$  \\
+        $0.5157$ & $0.4843$ & $0.960 \times 10^{-2}$ & $0.8406$  \\ 
+        \hline
+        \end{tabular}
+    \end{center}
+    \caption{mejores resultados para la búsqueda aleatoria de hiperparámetros para \textit{naïve bayes}.} \label{naive_bayes}
+\end{figure}
+
