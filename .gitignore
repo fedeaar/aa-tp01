@@ -11,3 +11,4 @@ __pycache__
 **/informe/*.toc
 **/informe/*.bbl
 **/informe/*.blg
+**/experimentacion/.ipynb_checkpoints
