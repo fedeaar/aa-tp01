@@ -3,6 +3,8 @@ from typing_extensions import Self
 from sklearn.base import BaseEstimator
 from sklearn.tree import DecisionTreeClassifier
 from sklearn.svm import SVC
+from sklearn.ensemble import RandomForestClassifier
+from sklearn.discriminant_analysis import LinearDiscriminantAnalysis
 import numpy as np
 
 
@@ -44,11 +46,31 @@ class DecisionTreeWrapper(EstimatorWrapper):
         return self.estimator.predict_proba(X)[:, 1]
 
 
+class ForestTreeWrapper(EstimatorWrapper):
+    estimator: RandomForestClassifier
+
+    def __init__(self, **kwargs):
+        self.estimator = RandomForestClassifier(**kwargs)
+
+    def decision(self, X: np.ndarray) -> np.ndarray:
+        return self.estimator.predict_proba(X)[:, 1]
+
+
 class SVCWrapper(EstimatorWrapper):
     estimator: SVC
 
     def __init__(self, **kwargs):
         self.estimator = SVC(**kwargs)
+
+    def decision(self, X: np.ndarray) -> np.ndarray:
+        return self.estimator.decision_function(X)
+
+
+class LDAWrapper(EstimatorWrapper):
+    estimator: LinearDiscriminantAnalysis
+
+    def __init__(self, **kwargs):
+        self.estimator = LinearDiscriminantAnalysis(**kwargs)
 
     def decision(self, X: np.ndarray) -> np.ndarray:
         return self.estimator.decision_function(X)
