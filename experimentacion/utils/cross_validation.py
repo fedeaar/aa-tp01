@@ -28,18 +28,18 @@ def cross_validate(
     results : pd.DataFrame
         pandas DataFrame with columns:
             mean_val : float
-                the mean value of split_metrics_val
+                the mean value of split_val
 
             mean_train : float
-                the mean value of split_metrics_train
+                the mean value of split_train
 
             tot_val : float
                 the evaluation of the metric on y and y_pred
     
-            split_metrics_val_[0:k) : float
+            split_val_[0:k) : float
                 each cross-validation model's evaluated metric on its validation set
     
-            split_metrics_train_[0:k): float
+            split_train_[0:k): float
                 each cross-validation model's evaluated metric on its train set
 
     y_pred : np.ndarray
