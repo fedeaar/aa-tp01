@@ -36,24 +36,28 @@ Variando la cantidad de datos de entrenamiento en el rango $[30, n]$ con un step
 
 
 \subsection{SVM}
-De la Figura  que los mejores hiperparámetros para este clasificador son:
 
-\begin{itemize}
-    \item \textit{Atributos Máximos} = 135.
-    \item \textit{Criterio de Corte} = Entropía.
-    \item \textit{Altura Máxima} = 3
-\end{itemize}
+Basándonos en la mejor configuración de hiperparámetros hallada en el ejercicio 3, procedimos a realizar una curva de complejidad variando el C y analizando como varía la performance del SVM. 
 
-Utilizamos este último para graficar las curvas de complejidad observadas en la Figura \ref{decisionTreeComplexity}. En ellas podemos apreciar que, respaldando los resultados de este clasificador en la sección anterior, obtenemos la mejor performance utilizando \textit{altura máxima} 3 y 4. Podemos intuir que durante la búsqueda aleatoria de hiperparámentros la combinación con \textit{altura máxima} 4 no se habría probado, de otro modo hubiese aparecido como la mejor.  
+El hiperparámetro C permite generar un control de la penalización por errores de clasificación. Un valor mayor de C significa que el modelo penalizará más los errores de clasificación lo cual implica que buscará un hiperplano de separación que clasifique correctamente la mayor cantidad posible de ejemplos de entrenamiento. Por otro lado, un valor de C menor permite que el modelo tolere más errores de clasificación y puede resultar en un hiperplano de separación más general, incluso si esto significa clasificar incorrectamente algunos ejemplos de entrenamiento.
 
 \begin{figure}[!htbp]
     \centering
-    \includegraphics[width=0.75\textwidth]{/files/src/.media/decisionTreeComplexity.png}
-    \caption{Curvas de complejidada para el clasificador \textit{decision tree}, mostrando la variación del AUC ROC en datos de entrenamiento y validación a medida que se aumenta su profundida máxima.}
+    \includegraphics[width=0.75\textwidth]{/files/src/.media/SVMComplexity.png}
+    \caption{Curvas de complejidad para el clasificador \textit{SVM}, mostrando la variación del AUC ROC en datos de entrenamiento y validación a medida que varía el C donde mostramos la media y la varianza de la performance de los folds de la crossvalidation.}
     \label{SVMComplexity}
 \end{figure}
 
-A partir de los clasificadores de altura mayor a 7 se puede ver cómo el modelo se  acopla completamente a los datos de entrenamiento, generando un \textit{overfitting}. A su vez, sus respectivas performances en los datos de validación decrementan desde el mejor valor de \textit{altura máxima} = 4 hasta estabilizarse en las alturas mayores a 8. Esto podría indicar que el modelo ya separó todas las instancias en sus respectivas hojas, y dejó de cambiar sus reglas de corte. 
+Como se puede ver en el gráfico, el hiperparámetro C afecta a la performance del algoritmo, aunque no de forma considerable. En base a lo observado el algoritmo es bastante bueno para modelar el problema ya que sin importar el C elegido la media de AUCROC es bastante alta. En cambio un C incorrecto genera que la varianza de la performance de los folds sea alta, por lo que elegir el C correcto pareciera tener un mayor impacto en la estabilidad del modelo que en la performance.
+
+\begin{figure}[!htbp]
+    \centering
+    \includegraphics[width=0.75\textwidth]{/files/src/.media/SVMLearning.png}
+    \caption{Curvas de complejidad para el clasificador \textit{SVM}, mostrando la variación del AUC ROC en datos de entrenamiento y validación a medida que varía el C donde mostramos la media y la varianza de la performance de los folds de la crossvalidation.}
+    \label{SVMLearning}
+\end{figure}
+
+El gráfico de la curva de aprendizaje nos permite determinar que la cantidad de datos es suficiente para armar un modelo decente de SVM ya que a partir de 250 datos, pareciera mantener una performance constante sin denotar una clara tendencia creciente. Algo a destacar es que, a diferencia de árboles de decisión, las barras de error incluso considerando casi todos los datos, siguen mostrando una gran variabilidad en tamaño, lo cual denota una posible inestabilidad del algoritmo.
 
 \subsection{Random Forest}
 
@@ -65,7 +69,6 @@ Primero realizamos un Random Search para encontrar hiperparámetros decentes par
     \caption{Curvas de complejidad para el clasificador \textit{Random Forest}, mostrando la variación del AUC ROC en datos de entrenamiento y validación a medida que se aumenta su maxfeatures.}
     \label{RFComplexity}
 \end{figure}
-
 
 
 La figura nos muestra algo que tiene sentido que es que cuando maxfeatures es muy bajo genera un impacto negativo en la performance del algoritmo. Esto tiene sentido ya que maxfeatures representa la cantidad de atributos tomados de manera aleatoria que cada decision tree que compone el forest va a considerar en cada paso del algoritmo. Es lógico que si considerás muy pocos atributos para realizar los cortes no encuentres buenas opciones y por lo tanto tengas un modelo defectuoso.
@@ -85,3 +88,5 @@ Concluimos que tiene sentido tomar logaritmo o sqrt de la cantidad de atributos 
 
 
 Por otro lado, graficamos una curva de aprendizaje para determinar si sería útil o no conseguir más datos. Lo que observamos a partir de la figura, es que a partir de 200 datos la performance del algoritmo parece mantenerse constante sin notar una tendencia alcista. Concluimos que la cantidad de datos provista es suficiente como para generar un modelo decente basado en random forest. 
+
+Algo interesante a destacar de la curva de aprendizaje del random forest es que las barras de error son consistentemente pequeñas a medida que se aumentan los datos. 
