@@ -2,7 +2,7 @@ Procedemos a evaluar el uso de distintos algoritmos de aprendizaje supervisado p
 
 La búsqueda se realizará con \textit{RandomizedSearchCV} de \textit{scikit-learn}, utilizando como mecanismo de evaluación $5$-fold cross-validation estratificado con métrica \textit{aucroc} promedio. Se realizarán $100$ iteraciones por algoritmo.
 
-\subsection{decision trees}
+\subsection{Árboles de decisión}
 Realizamos una última búsqueda de hiperparámetros prometedores para los \textit{árboles de decisión}. La misma se llevó a cabo con el clasificador \textit{DecisionTreeClassifier} de \textit{scikit-learn} para los siguientes hiperparámetros y rangos: 
 
 \begin{itemize}
@@ -35,7 +35,7 @@ La Figura \ref{random_tree} muestra los $5$ mejores candidatos obtenidos. Los re
 
 Si bien el criterio de corte influye, la similitud entre Gini y Entropía llevan a intuir que fue la limitación en la cantidad máxima de atributos a considerar la que llevó a una mejora sustancial con respecto al modelo de la Sección \ref{simple}. Esto puede deberse a que limita la influencia de los atributos más importantes durante la construcción del árbol.
 
-\subsection{k-nearest neighbours}
+\subsection{K-Nearest neighbours}
 Para el clasificador \textit{KNeighborsClassifier} de \textit{scikit-learn}, usamos los hiperparámetros:
 
 \begin{itemize}
@@ -66,7 +66,7 @@ Además, la búsqueda aleatoria permitió determinar un rango apropiado de vecin
     \caption{mejores resultados para la búsqueda aleatoria de hiperparámetros para \textit{k-nearest neighbours}.} \label{knn}
 \end{figure}
 
-\subsection{linear discriminant analysis}
+\subsection{Linear discriminant analysis}
 La busqueda, para el clasificador \textit{LinearDiscriminantAnalysis} de \textit{scikit-learn} fue llevada a cabo con los siguientes hiperparámetros: 
 
 \begin{itemize}
@@ -96,7 +96,7 @@ Al observar la Figura \ref{lda}, notamos que la elección del Solver (Eigen o Ls
     \caption{Mejores resultados para la búsqueda aleatoria de hiperparámetros para \textit{linear discriminant analysis}.} \label{lda}
 \end{figure}
 
-\subsection{support vector machines}
+\subsection{Support vector machines}
 Realizamos la busqueda, para el modelo \textit{Support Vector Machines}. Llevada a cabo con el clasificador \textit{SVC} de \textit{scikit-learn}, usamos los siguientes hiperparámetros y rangos: 
 
 \begin{itemize}
@@ -124,7 +124,7 @@ En la Figura \ref{support vector machines}, se observa que la configuración má
     \caption{mejores resultados para la búsqueda aleatoria de hiperparámetros para \textit{support vector machines}.} \label{support vector machines}
 \end{figure}
 
-\subsection{naïve bayes}
+\subsection{Gaussian naïve bayes}
 Se examinó por último el rendimiento del clasificador \textit{GaussianNB} de \textit{scikit-learn}. Los hiperparámetros de este algoritmo a optimizar y sus rangos fueron:
 
 \begin{itemize}

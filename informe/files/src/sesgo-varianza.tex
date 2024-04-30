@@ -10,7 +10,7 @@
 
 Procedemos en esta sección a inspeccionar los mejores modelos encontrados para los clasificadores \textit{árboles de decisión}, \textit{LDA} y \textit{SVM}. En particular, buscamos entender su comportamiento al aumentar su complejidad (variando alguno de sus hiperparámentros), trazar sus curvas de aprendizaje, y sacar conclusiones sobre sus varianzas y sesgo. Por último, los compararemos con un clasificador de tipo \textit{random forest}.
 
-\subsection{decision trees}
+\subsection{Árboles de decisión}
 Para el mejor modelo obtenido en la Figura \ref{random_tree}, variamos la \textit{profundidad máxima} para graficar las curvas de complejidad observadas en la Figura \ref{decisionTreeComplexity}. En ella podemos apreciar que, a partir de los clasificadores de \textit{altura máxima} $> 7$, el modelo se acopla completamente a los datos de entrenamiento, generando un \textit{overfitting}. A su vez, sus respectivas performances en los datos de validación decrementan desde el mejor valor de $\textit{altura máxima} = 4$ hasta estabilizarse en las alturas mayores a 8. Esto podría indicar que el modelo ya separó todas las instancias en sus respectivas hojas, y dejó de cambiar sus reglas de corte. Podemos también apreciar que durante la búsqueda aleatoria de hiperparámentros la combinación con \textit{altura máxima} 4 no se habría probado, de otro modo hubiese aparecido como la mejor.  
 \begin{figure}[!htbp]
     \centering
@@ -35,7 +35,7 @@ Variando la cantidad de datos de entrenamiento en el rango $[30, n]$ con un step
 \end{figure}
 
 
-\subsection{SVM}
+\subsection{Support vector machines}
 De la Figura  que los mejores hiperparámetros para este clasificador son:
 
 \begin{itemize}
@@ -55,4 +55,4 @@ Utilizamos este último para graficar las curvas de complejidad observadas en la
 
 A partir de los clasificadores de altura mayor a 7 se puede ver cómo el modelo se  acopla completamente a los datos de entrenamiento, generando un \textit{overfitting}. A su vez, sus respectivas performances en los datos de validación decrementan desde el mejor valor de \textit{altura máxima} = 4 hasta estabilizarse en las alturas mayores a 8. Esto podría indicar que el modelo ya separó todas las instancias en sus respectivas hojas, y dejó de cambiar sus reglas de corte. 
 
-\subsection{random forest}
+\subsection{Random forests}
