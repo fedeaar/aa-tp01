@@ -39,12 +39,15 @@ Si bien el criterio de corte influye, la similitud entre Gini y Entropía llevan
 Para el clasificador \textit{KNeighborsClassifier} de \textit{scikit-learn}, usamos los hiperparámetros:
 
 \begin{itemize}
-    \item Cantidad de vecinos más cercanos: Permitimos una distribución \textit{LogUniform(10,N/2)}, donde \textit{N} es la cantidad de instancias de $D_{train}$ y 10 porque para valores más bajos no encontramos evidencia empírica que mejore la performance. 
-    \item Eleccion de pesos por vecino: Permitimos \textit{Uniform} donde cada instancia se pondera por igual, u \textit{Distance} donde los vecinos más cercanos tendrán un peso más determinante que los demás.
-    \item Eleccion de metrica: Permitimos que se usen las métricas usuales \textit{l1}, \textit{l2}, \textit{l3} y \textit{l4}. 
+    \item Cantidad de vecinos más cercanos: Permitimos que sigan una distribución \textit{LogUniform(10,N/2)}, donde \textit{N} es la cantidad de instancias de $D_{train}$ y 10 porque para valores más bajos no encontramos evidencia empírica que mejore la performance. 
+    \item Eleccion de pesos por vecino: Permitimos \textit{Uniform} donde cada instancia se pondera por igual, o \textit{Distance} donde los vecinos más cercanos tendrán un peso más determinante que los demás.
+    \item Eleccion de metrica: Optamos que se usen las métricas usuales \textit{l1}, \textit{l2}, \textit{l3} y \textit{l4}. 
 \end{itemize}
 
-Optamos por usar una distribución \textit{LogUniforme}, para la elección de $k$, pues es conveniente no obtener valores demasiado grandes pues puede conducir al overfitting, considerando que estamos generando 100 muestras de dicha distribución sumado a la cota inferior adecuada podemos controlar el underfitting. 
+Se seleccionó una distribución \textit{LogUniforme} para determinar el valor de kk, dado que resulta conveniente evitar valores excesivamente grandes, los cuales podrían inducir overfitting. Al generar 100 muestras de esta distribución y establecer una cota inferior adecuada, se busca controlar el riesgo de underfitting.
+
+Observando la Figura \ref{knn}, se identificó que la elección de pesos ponderados basados en la distancia, combinados con la métrica 1 (l1), pareciera ser óptima para el problema en cuestión.
+Además, la búsqueda aleatoria permitió determinar un rango apropiado de vecinos, comprendido entre 10 y 30.
 \vspace{0.5em}
 \begin{figure}[!htbp]
     \begin{center}
@@ -63,10 +66,6 @@ Optamos por usar una distribución \textit{LogUniforme}, para la elección de $k
     \caption{mejores resultados para la búsqueda aleatoria de hiperparámetros para \textit{k-nearest neighbours}.} \label{knn}
 \end{figure}
 
-Se identificó que la elección de pesos ponderados basados en la distancia, combinados con la métrica 1 (distancia de Manhattan), demostró ser óptima para el problema en cuestión. Este enfoque resalta la relevancia de considerar la estructura de los datos y la proximidad entre las muestras para una predicción precisa.
-Además, la búsqueda aleatoria permitió determinar un rango apropiado de vecinos, comprendido entre 11 y 30. Esta selección se basó en la necesidad de encontrar un equilibrio entre el sesgo y la varianza del modelo, asegurando una adecuada capacidad de generalización a nuevas instancias.
-Estos hallazgos subrayan la importancia de un enfoque sistemático en la selección de hiperparámetros, destacando cómo una exploración cuidadosa puede conducir a mejoras significativas en el rendimiento predictivo del modelo KNN.
-
 \subsection{linear discriminant analysis}
 La busqueda, para el clasificador \textit{LinearDiscriminantAnalysis} de \textit{scikit-learn} fue llevada a cabo con los siguientes hiperparámetros: 
 
@@ -76,6 +75,8 @@ La busqueda, para el clasificador \textit{LinearDiscriminantAnalysis} de \textit
 \end{itemize}
 
 Se exploraron otros hiperparámetros, pero optamos por no agregarlos debido a que no parecian influir de forma significativa en los resultados finales. 
+
+Al observar la Figura \ref{lda}, notamos que la elección del Solver (Eigen o Lsqr) parece no influir significativamente. Más bien, resulta más determinante el uso de un parámetro de contracción adecuado, que parece rondar los $0.26$. Finalmente, se observa que el uso de SVD no conduce a una buena performance.
 
 \vspace{0.5em}
 \begin{figure}[!htbp]
@@ -95,8 +96,33 @@ Se exploraron otros hiperparámetros, pero optamos por no agregarlos debido a qu
     \caption{Mejores resultados para la búsqueda aleatoria de hiperparámetros para \textit{linear discriminant analysis}.} \label{lda}
 \end{figure}
 
-La eleccion del Solver Eigen o Lsqr, pareciera no influir pues es mas determinante usar un parametro de contraccion adecuado, el uso de svd da como resultado una peor performance. 
 \subsection{support vector machines}
+Realizamos la busqueda, para el modelo \textit{Support Vector Machines}. Llevada a cabo con el clasificador \textit{SVC} de \textit{scikit-learn}, usamos los siguientes hiperparámetros y rangos: 
+
+\begin{itemize}
+    \item Parámetro de regularización: Optamos porque siga una distribucion \textit{LogUniform(1e-5,1e2)}, como el valor es inversamente proporcional a `C` es relevante que tome mas valores chicos que grandes pues hara que la suma poderada de errores de las instancias que estan en el lado equivocado de la frontera de decision, tenga un grado mas de tolerancia.
+    \item Kernel: Permitimos \textit{linear}, \textit{poly}, \textit{rbf} (función de base radial) y \textit{sigmoid} (función tanh).
+    \item Coeficiente de Kernel: Decidimos elegir entre \textit{scale}, que toma $ \gamma = \frac{1}{p*X.var()}$, u \textit{auto} con $\gamma = \frac{1}{p} $, donde $p=200$ (cantidad de genes).
+\end{itemize}
+
+En la Figura \ref{support vector machines}, se observa que la configuración más relevante, a priori, es que $\gamma$ este escalado, que busca normalizar la influencia de las características en el cálculo de la función de kernel. Esta normalización es especialmente útil para conjuntos de datos que contienen características de diferentes escalas. Además, se destaca que el kernel de función de base radial resultó ser el más exitoso. Aunque no parece que el parámetro C tenga una influencia significativa, los valores seleccionados no fueron muy grandes. Es importante señalar que los grados solo se consideran en los kernels \textit{poly}; por lo tanto, no tienen relevancia para los demás tipos de kernel.
+\vspace{0.5em}
+\begin{figure}[!htbp]
+    \begin{center}
+        \begin{tabular}{ |c|c|c|c|c| } 
+         \hline
+        $C$ & Kernel & $\gamma$ & grado & aucroc (validación) \\
+        \hline
+        $2.5408$ & rbf     & scale & $7$ & $0.8960$ \\ 
+        $2.6202$ & rbf    & scale & $6$ & $0.8960$ \\
+        $13.4965$ & rbf   & scale & $3$ & $0.8956$ \\ 
+        $20.2985$ & rbf   & scale & $8$ & $0.8956$ \\
+        $3.4142$ & rbf    & scale & $6$ & $0.8955$ \\ 
+        \hline
+        \end{tabular}
+    \end{center}
+    \caption{mejores resultados para la búsqueda aleatoria de hiperparámetros para \textit{support vector machines}.} \label{support vector machines}
+\end{figure}
 
 \subsection{naïve bayes}
 Se examinó por último el rendimiento del clasificador \textit{GaussianNB} de \textit{scikit-learn}. Los hiperparámetros de este algoritmo a optimizar y sus rangos fueron:
