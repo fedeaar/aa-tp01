@@ -55,4 +55,23 @@ Utilizamos este último para graficar las curvas de complejidad observadas en la
 
 A partir de los clasificadores de altura mayor a 7 se puede ver cómo el modelo se  acopla completamente a los datos de entrenamiento, generando un \textit{overfitting}. A su vez, sus respectivas performances en los datos de validación decrementan desde el mejor valor de \textit{altura máxima} = 4 hasta estabilizarse en las alturas mayores a 8. Esto podría indicar que el modelo ya separó todas las instancias en sus respectivas hojas, y dejó de cambiar sus reglas de corte. 
 
-\subsection{random forest}
+\subsection{Random Forest}
+
+Primero realizamos un Random Search para encontrar hiperparámetros decentes para Criterion y para maxdepth. Luego realizamos una curva de complejidad variando el maxfeatures, que nos serviría para entender como afecta este hiperparámetro a la performance del Algoritmo. 
+
+\begin{figure}[!htbp]
+    \centering
+    \includegraphics[width=0.75\textwidth]{/files/src/.media/randomForestComplejidad.png}
+    \caption{Curvas de complejidada para el clasificador \textit{Random Forest}, mostrando la variación del AUC ROC en datos de entrenamiento y validación a medida que se aumenta su maxfeatures.}
+    \label{RFComplexity}
+\end{figure}
+
+
+
+La figura nos muestra algo que tiene sentido que es que cuando maxfeatures es muy bajo genera un impacto negativo en la performance del algoritmo. Esto tiene sentido ya que maxfeatures representa la cantidad de atributos tomados de manera aleatoria que cada decision tree que compone el forest va a considerar en cada paso del algoritmo. Es lógico que si considerás muy pocos atributos para realizar los cortes no encuentres buenas opciones y por lo tanto tengas un modelo defectuoso.
+
+Por otro lado, la figura nos muestra otro resultado que no es tan intuitivo, que es que maxfeatures rápidamente alcanza su límite en el impacto en la performance y luego a medida que sigue aumentando, incluso pareciera decrecer ligeramente. Este resultado es particularmente atractivo ya que si bien a medida que crece no mejora considerablemente la performance, si afecta directamente el costo computacional. 
+
+La posible explicación para porque puede ser contraproducente tener un maxfeatures muy alto es que mientras mas atributos se consideren en cada corte, menos variabilidad vamos a encontrar entre los árboles que componen el bosque. Es decir, los árboles resultantes van a ser más parecidos entre sí, lo cual genera un \textit{overfitting} de los datos.  
+
+Concluimos que tiene sentido tomar logaritmo o sqrt de la cantidad de atributos de los datos, para mantener maxfeatures dependiente de la cantidad de atributos pero que sea realativamente bajo, para tener una buena performance y minimizar la complejidad computacional. 
