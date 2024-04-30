@@ -62,7 +62,7 @@ Primero realizamos un Random Search para encontrar hiperparámetros decentes par
 \begin{figure}[!htbp]
     \centering
     \includegraphics[width=0.75\textwidth]{/files/src/.media/randomForestComplejidad.png}
-    \caption{Curvas de complejidada para el clasificador \textit{Random Forest}, mostrando la variación del AUC ROC en datos de entrenamiento y validación a medida que se aumenta su maxfeatures.}
+    \caption{Curvas de complejidad para el clasificador \textit{Random Forest}, mostrando la variación del AUC ROC en datos de entrenamiento y validación a medida que se aumenta su maxfeatures.}
     \label{RFComplexity}
 \end{figure}
 
@@ -75,3 +75,13 @@ Por otro lado, la figura nos muestra otro resultado que no es tan intuitivo, que
 La posible explicación para porque puede ser contraproducente tener un maxfeatures muy alto es que mientras mas atributos se consideren en cada corte, menos variabilidad vamos a encontrar entre los árboles que componen el bosque. Es decir, los árboles resultantes van a ser más parecidos entre sí, lo cual genera un \textit{overfitting} de los datos.  
 
 Concluimos que tiene sentido tomar logaritmo o sqrt de la cantidad de atributos de los datos, para mantener maxfeatures dependiente de la cantidad de atributos pero que sea realativamente bajo, para tener una buena performance y minimizar la complejidad computacional. 
+
+\begin{figure}[!htbp]
+    \centering
+    \includegraphics[width=0.75\textwidth]{/files/src/.media/randomForestAprendizaje.png}
+    \caption{Curvas de complejidada para el clasificador \textit{Random Forest}, mostrando la variación del AUC ROC en datos de entrenamiento y validación a medida que se aumenta su maxfeatures.}
+    \label{RFLearning}
+\end{figure}
+
+
+Por otro lado, graficamos una curva de aprendizaje para determinar si sería útil o no conseguir más datos. Lo que observamos a partir de la figura, es que a partir de 200 datos la performance del algoritmo parece mantenerse constante sin notar una tendencia alcista. Concluimos que la cantidad de datos provista es suficiente como para generar un modelo basado en random forest decente. 
