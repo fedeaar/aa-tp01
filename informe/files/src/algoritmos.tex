@@ -1,19 +1,19 @@
-Procedemos a evaluar el uso de distintos algoritmos de aprendizaje supervisado para la resolución del problema. Para cada uno, realizaremos una búsqueda aleatoria con el objetivo de encontrar buenos hiperparámetros, guiados por nuestras propias suposiciones respecto de cuáles pueden llegar a importar y en qué rangos de valores.
+A partir de los resultados del árbol \textit{simple}, interesa explorar el uso de distintos algoritmos de aprendizaje que puedan arrojar mejores resultados. En particular, evaluaremos la performance de los \textit{árboles de decisión}, \textit{k-nearest neighbours}, \textit{linear discriminant analysis}, \textit{support vector machines} y \textit{gaussian naïve bayes} en términos de \textit{aucroc} promedio. Para cada uno, realizaremos una búsqueda aleatoria con el objetivo de encontrar buenos hiperparámetros, guiados por nuestras propias suposiciones respecto a cuáles pueden llegar a importar y en qué rangos de valores.
 
-La búsqueda se realizará con \textit{RandomizedSearchCV} de \textit{scikit-learn}, utilizando como mecanismo de evaluación $5$-fold cross-validation estratificado con métrica \textit{aucroc} promedio. Se realizarán $100$ iteraciones por algoritmo.
+La búsqueda se realizará con \textit{RandomizedSearchCV} de \textit{scikit-learn}, utilizando como mecanismo de evaluación $5$-fold cross-validation estratificado. Se harán $100$ iteraciones por algoritmo.
 
 \subsection{Árboles de decisión}
-Realizamos una última búsqueda de hiperparámetros prometedores para los \textit{árboles de decisión}. La misma se llevó a cabo con el clasificador \textit{DecisionTreeClassifier} de \textit{scikit-learn} para los siguientes hiperparámetros y rangos: 
+Para este clasificador, se considerarán los siguientes hiperparámetros y rangos. 
 
 \begin{itemize}
     \item El criterio de corte: permitimos todos los criterios implementados por el algoritmo. Estos son \textit{Gini}, \textit{Entropy} y \textit{Log loss}. 
-    \item La profundidad máxima: permitimos que varie en el rango $[3,\ \lfloor\sqrt{n} \rfloor]$ de manera uniforme, con $n=451$ la cantidad de instancias en $D_{train}$, bajo la suposición que un árbol \textit{corto} es preferible tanto a un \textit{stump} como a un árbol profundo.
-    \item La cantidad de atributos máxima a considerar por corte: permitimos que varíe de manera uniforme sobre $[1, p]$, con $p = 200$ la cantidad total de atributos en $D_{train}$.
+    \item La profundidad máxima: permitimos que varie en el rango $[3,\ \lfloor\sqrt{n} \rfloor]$ de manera uniforme, con $n=451$, bajo la suposición que un árbol \textit{corto} es preferible tanto a un \textit{stump} como a un árbol profundo.
+    \item La cantidad de atributos máxima a considerar por corte: permitimos que varíe de manera uniforme sobre $[1, p]$, con $p = 200$.
 \end{itemize}
 
-Si bien se exploraron de manera tentativa otros hiperparámetros, se decidió no agregarlos a la búsqueda general, ya que no parecieron influir positivamente en los resultados. A su vez, consideramos que la cantidad de restricciones agregadas es inversamente proporcional a la probabilidad de encontrar una buena combinación de hiperparámetros, en especial cuando la influencia de los hiperparámetros no parece ser igual. 
+Si bien se exploraron de manera tentativa otros hiperparámetros, se decidió no agregarlos a la búsqueda general, ya que  parecían no influir positivamente en los resultados. Basamos esta idea, también, en que consideramos que la cantidad de restricciones agregadas es inversamente proporcional a la probabilidad de encontrar una buena combinación de hiperparámetros, en especial cuando la influencia de los hiperparámetros no pareceria ser igual. 
 
-La Figura \ref{random_tree} muestra los $5$ mejores candidatos obtenidos. Los resultados parecen respaldar la supocisión de que un árbol corto es mejor (notar que $\lfloor\sqrt{n} \rfloor = 21$).
+La Figura \ref{random_tree} muestra los $5$ mejores candidatos obtenidos. Los resultados respaldan la supocisión de que un árbol corto es mejor a uno profundo (notar que $\lfloor\sqrt{n} \rfloor = 21$).
 
 \vspace{0.5em}
 \begin{figure}[!htbp]
@@ -30,16 +30,16 @@ La Figura \ref{random_tree} muestra los $5$ mejores candidatos obtenidos. Los re
         \hline
         \end{tabular}
     \end{center}
-    \caption{mejores resultados para la búsqueda aleatoria de hiperparámetros para \textit{árboles de decisión}.} \label{random_tree}
+    \caption{mejores resultados para la búsqueda aleatoria de hiperparámetros en el caso de \textit{árboles de decisión}.} \label{random_tree}
 \end{figure}
 
 Si bien el criterio de corte influye, la similitud entre Gini y Entropía llevan a intuir que fue la limitación en la cantidad máxima de atributos a considerar la que llevó a una mejora sustancial con respecto al modelo de la Sección \ref{simple}. Esto puede deberse a que limita la influencia de los atributos más importantes durante la construcción del árbol.
 
 \subsection{K-Nearest neighbours}
-Para el clasificador \textit{KNeighborsClassifier} de \textit{scikit-learn}, usamos los hiperparámetros:
+En este caso, se utilizará el clasificador \textit{KNeighborsClassifier} de \textit{scikit-learn} con las siguientes opciones de hiperparámetros.
 
 \begin{itemize}
-    \item Cantidad de vecinos más cercanos: Permitimos que sigan una distribución \textit{LogUniform(10,N/2)}, donde \textit{N} es la cantidad de instancias de $D_{train}$ y 10 porque para valores más bajos no encontramos evidencia empírica que mejore la performance. 
+    \item Cantidad de vecinos más cercanos: permitimos que sigan una distribución \textit{LogUniform(10, n/2)}. La cota inferior de $10$ porque para valores más bajos no encontramos evidencia empírica que mejore la performance. 
     \item Eleccion de pesos por vecino: Permitimos \textit{Uniform} donde cada instancia se pondera por igual, o \textit{Distance} donde los vecinos más cercanos tendrán un peso más determinante que los demás.
     \item Eleccion de metrica: Optamos que se usen las métricas usuales \textit{l1}, \textit{l2}, \textit{l3} y \textit{l4}. 
 \end{itemize}
