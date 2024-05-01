@@ -1,0 +1,5 @@
+De los resultados obtenidos a lo largo de este informe, vemos que los modelos más prometedores parecen ser aquellos basados en los algoritmos de \textit{linear discriminant analysis} y \textit{support vector machines}. En la búsqueda aleatoria ambos obtuvieron buenos puntajes. El anterior obtuvo un \textit{aucroc} promedio de $0.8649$ y el posterior de $0.8960$.
+
+A pesar de la ventaja aparente del segundo, en el diagnóstico de sesgo y varianza continuamos por observar el comportamiento de ambos y notamos que el modelo basado en el algoritmo de \textit{support vector machines} parece tener un sesgo mayor y una tendencia a sobreajustarse a los datos, incluso al contar con una cantidad de datos grande de entrenamiento.
+
+Luego, consideramos que el mejor modelo ---tanto en el sentido del \textit{aucroc} promedio obtenido, como en el sentido de la confianza que nuestra experimentación nos permite depositar en esta métrica--- es aquel obtenido por el algoritmo de \textit{linear discriminant analysis} con los hiperparámetros encontrados.  
