@@ -107,7 +107,7 @@ La Figura \ref{lda} muestra los resultados. Notamos que la elección del Solver 
     \item Grado: permitimos que varíe de manera uniforme en el rango $[2, 10]$. Este hiperparámetro solo se utiliza en el kernel \textit{poly}.
 \end{itemize}
 
-La Figura \ref{support vector machines} muestra los resultados. Se observa que la configuración más relevante, a priori, corresponde a $\gamma$ escalado. Este hiperparámetro busca normalizar la influencia de las instancias en el cálculo de la función del kernel. Esta normalización es especialmente útil para conjuntos de datos que contienen instancias de diferentes escalas, como es el caso de $D_{train}$. Además, se destaca que el kernel de función de base radial resultó ser el más exitoso. 
+La Figura \ref{svm} muestra los resultados. Se observa que la configuración más relevante, a priori, corresponde a $\gamma$ escalado. Este hiperparámetro busca normalizar la influencia de las instancias en el cálculo de la función del kernel. Esta normalización es especialmente útil para conjuntos de datos que contienen instancias de diferentes escalas, como es el caso de $D_{train}$. Además, se destaca que el kernel de función de base radial resultó ser el más exitoso. 
 
 Aunque no parezca que el parámetro C tenga una influencia significativa, los valores seleccionados no fueron muy grandes, por lo que se probaron modelos más permisivos, lo que podría ayudar a reducir las chances de sobreajuste del modelo. 
 
@@ -128,7 +128,7 @@ Es importante señalar, también, que como los grados sólo se consideran en los
         \hline
         \end{tabular}
     \end{center}
-    \caption{mejores resultados para la búsqueda aleatoria de hiperparámetros en el caso de \textit{support vector machines}.} \label{support vector machines}
+    \caption{mejores resultados para la búsqueda aleatoria de hiperparámetros en el caso de \textit{support vector machines}.} \label{svm}
 \end{figure}
 
 \subsection{Gaussian naïve bayes}

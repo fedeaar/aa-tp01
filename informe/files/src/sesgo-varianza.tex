@@ -1,58 +1,65 @@
-Evaluados los distintos algoritmos, en esta sección vamos a inspeccionar los mejores modelos encontrados para los clasificadores \textit{árboles de decisión}, \textit{linear discriminant analysis}, \textit{support vector machines} y \textit{random forests}. En particular, vamos a buscar entender su comportamiento al aumentar su complejidad (variando alguno de sus hiperparámentros), trazar sus curvas de aprendizaje, y sacar conclusiones sobre sus varianzas y sesgo. Por último, los compararemos con un clasificador de tipo \textit{random forest}.
+Evaluados los distintos algoritmos, pasamos ahora a inspeccionar los mejores modelos encontrados para los clasificadores \textit{árboles de decisión}, \textit{linear discriminant analysis} y \textit{support vector machines}. En cada caso, vamos a buscar entender el comportamiento del algoritmo en función de aquellos hiperparámetros que regulan su complejidad; trazaremos curvas de aprendizaje, y sacaremos conclusiones en términos del sesgo y la varianza. Por último, dado que puede resultar de interés evaluar la aplicación de métodos de \textit{bagging}, vamos a realizar el mismo tipo de análisis para un modelo basado en \textit{random forests}.
+
+El análisis se realizará de la siguiente forma: en base a las configuraciones obtenidas durante la etapa de búsqueda para cada clasificador, vamos a entrenar y evaluar una serie de nuevos modelos variando, por un lado, uno de sus hiperparámetros\footnote{En un rango relevante al mismo.} y, por el otro, la cantidad de datos\footnote{En el rango $[30, n]$ de a pasos de $10$.} de entrenamiento\footnote{Aclaramos que esta variación se realizó de manera acumulativa. Es decir, entre dos cantidades de datos consecutivas, sus correspondientes datasets $A$ y $B$ satisfacen $A \subset B$.}. La evaluación, igual que antes, se realizará por medio de $5$-fold cross-validation estratificado.
 
 \subsection{Árboles de decisión}
-Para el mejor modelo obtenido en la Figura \ref{random_tree}, variamos la \textit{profundidad máxima} para graficar las curvas de complejidad observadas en la Figura \ref{decisionTreeComplexity}. En ella podemos apreciar que, a partir de los clasificadores de \textit{altura máxima} $> 7$, el modelo se acopla completamente a los datos de entrenamiento, generando un \textit{overfitting}. A su vez, sus respectivas performances en los datos de validación decrementan desde el mejor valor de $\textit{altura máxima} = 4$ hasta estabilizarse en las alturas mayores a 8. Esto podría indicar que el modelo ya separó todas las instancias en sus respectivas hojas, y dejó de cambiar sus reglas de corte. Podemos también apreciar que durante la búsqueda aleatoria de hiperparámentros la combinación con \textit{altura máxima} 4 no se habría probado, de otro modo hubiese aparecido como la mejor.
+Utilizando la configuración del modelo obtenido en la Figura \ref{random_tree}, generamos las curvas de complejidad ---sobre la \textit{altura máxima}--- y aprendizaje presentadas en la Figura \ref{decisionTreeComplexity}.  
 
-\begin{figure}[!htbp]
+Respecto de la complejidad, podemos apreciar que, a partir de una \textit{altura máxima} mayor a $7$, el modelo se acopla completamente a los datos de entrenamiento, indicando un sobreajuste. A su vez, sus respectivas performances en los datos de validación decrementan a partir de $\textit{altura máxima} = 4$ hasta estabilizarse en las alturas mayores a $8$. Esto podría indicar que el modelo ya separó todas las instancias en sus respectivas hojas, y dejó de cambiar sus reglas de corte. 
+Podemos apreciar que durante la búsqueda aleatoria, la combinación con \textit{altura máxima} 4 no se probó, de otro modo se hubiese presentado como la mejor.
+
+\vspace{0.5em}
+\begin{figure}[!htbp] 
     \centering
-    \includegraphics[width=0.49\textwidth]{/files/src/.media/decisionTreeComplexity.png}
-    \includegraphics[width=0.49\textwidth]{/files/src/.media/decisionTreeLearning.png}
-    \caption{Clasificador \textit{decision tree}. Izquierda: Curvas de complejidad mostrando la variación del \textit{aucroc} a medida que se aumenta la profundidad máxima. Derecha: Curvas de aprendizaje mostrando la variación del \textit{aucroc} a medida que se aumenta el tamaño del dataset.}
+    \includegraphics[width=0.4955\textwidth]{/files/src/.media/decisionTreeComplexity.png}
+    \includegraphics[width=0.4955\textwidth]{/files/src/.media/decisionTreeLearning.png}
+    \caption{Clasificador \textit{decision tree}. Izquierda: Curvas de complejidad mostrando la variación del \textit{aucroc} a medida que se aumenta la \textit{profundidad máxima}. Derecha: Curvas de aprendizaje mostrando la variación del \textit{aucroc} a medida que se aumenta el tamaño del dataset.}
     \label{decisionTreeComplexity}
 \end{figure}
 
-Con respecto a la varianza, podemos observar que el rendimiento de los modelos varía considerablemente según el dataset utilizado en entrenamiento. Esto puede apreciarse en las barras de error\footnote{Estas provienen de las mediciones de AUC ROC para cada fold de validación.}, donde en algunos casos como para \textit{altura máxima} = 2 y 5, hubo una diferencia de performance en más de un $10\%$. A su vez, puede verse cómo se van separando ambas curvas a medida que aumenta la profundidad máxima. Es decir, la performance del modelo en entrenamiento aumenta al hacer \textit{overfitting} mientras que en validación decrece. Esto muestra que la varianza del clasificador crece junto con la profundidad máxima, ya que el modelo se acopla cada vez más al dataset.
+Respecto a la varianza, podemos intuir que el rendimiento de este modelo va a cambiar considerablemente según el dataset utilizado en entrenamiento. Esto puede apreciarse en las barras de error\footnote{Estas corresponden a la desviación estándar de las mediciones de \textit{aucroc} para cada fold de validación.} presentes en la curva, donde en algunos casos, como para \textit{altura máxima} = 2 y 5, resultó en una diferencia de performance de más de un $10\%$ entre splits de validación. A su vez, puede verse cómo se van separando ambas curvas a medida que aumenta la \textit{profundidad máxima}. Es decir, la performance del modelo en entrenamiento aumenta mientras que en validación decrece. Esto muestra que la varianza del clasificador crece junto al hiperparámetro. El modelo parece acoplarse cada vez más al dataset.
 
-Por otro lado, todos los resultados del algoritmo en validación se encuentran con un AUC ROC por debajo de $0.75$, y con media aproximadamente en $0.6$, con lo cual parecería tener poca capacidad predictiva. En ese sentido, sin importar el valor del hiperparámentro parecería ser un algoritmo incapaz de acercarse a la distribución subyacente de los datos, produciendo \textit{underfitting} y presentando un sesgo alto.
+Por otro lado, todos los resultados del algoritmo en validación se encuentran con un \textit{aucroc} por debajo de $0.75$, y con una media aproximadamente de $0.6$. En consecuencia, el modelo parecería tener poca capacidad predictiva. Sin importar el valor del hiperparámetro, es incapaz de acercarse a la distribución subyacente de los datos.
 
 % 2. Graficar curvas de aprendizaje para cada modelo. En base a estas curvas, sacar conclusiones sobre si los algoritmos parecen haber alcanzado su límite, o bien si aumentar la cantidad de datos debería ayudar.
 
-Variando la cantidad de datos de entrenamiento en el rango $[30, n]$ con un step de $10$, siendo $n$ la cantidad total de instancias, obtuvimos las curvas de aprendizaje de la Figura \ref{decisionTreeLearning}. De ellas podemos observar que, con pocos datos ($< 150$ instancias), el modelo parecería funcionar igual, a veces hasta peor, que un clasificador aleatorio, con un AUC ROC en promediado rondando el $0.5$. Al aumentar la cantidad de datos, puede observarse como ambas curvas se van acercando entre sí, para luego estabilizarse en los valores $0.85$ para el set de entrenamiento y $0.6$ para el de validación. Esto indica que el algoritmo, sin importar cuánto aumentemos el tamaño del set de entrenamiento, parecería haber encontrado su límite de aprendizaje.
+Por el lado de la curva de aprendizaje, podemos observar que, con pocos datos (menos de $150$ instancias), el modelo parece funcionar igual, a veces hasta peor, que un clasificador aleatorio, ya que su valor de \textit{aucroc} ronda el $0.5$ para validación. Al aumentar la cantidad de datos, ambas curvas se acercan entre sí, para luego estabilizarse en los valores de $0.85$ para el set de entrenamiento y $0.6$ para el de validación, lo que da cuenta de un sesgo moderado. Esto indicaría que el algoritmo, sin importar cuánto aumentemos el tamaño del set de entrenamiento, habría encontrado su límite de aprendizaje. 
 
 \subsection{Linear discriminant analysis}
+A partir de la configuración obtenida en la Figura \ref{lda}, generamos la curva de aprendizaje presentada en la Figura \ref{LDALearning}. En este caso, no vamos a considerar curvas de complejidad, ya que el algoritmo no cuenta con ningún hiperparámetro que, para nosotros, sirva como proxy para esta medida.
 
-En el caso de este clasificador, no tiene sentido hablar de curvas complejidad al no poseer un hiperparámentro que la regule. Por otro lado, trazamos las curvas de aprendizaje expresadas en la Figura \ref{LDALearning}, variando la cantidad de datos con los que fue entrenado. 
-
-En ella, podemos apreciar que el modelo posee un sesgo bajo, teniendo en cuenta que su performance se estabiliza cerca del valor $0.8693$ al contar con $> 200$ datos. También, se puede ver que a partir de ese tamaño de dataset el modelo deja de aprender sobre el dominio del problema y mantiene una performance estable, con lo cual contar con más datos no lo beneficiaría significativamente. En particular, el mejor valor de \textit{auc roc} obtenido fue de $0.88$ para $250$ datos\footnote{Dado que en la construcción de las curvas de aprendizaje en cada iteración se aumenta la cantidad de datos de entrenamiento, no nos pareció correcto resetear el \textit{random state} en el proceso de validación cruzada. Luego, los resultados difieren un poco con respecto a los obtenidos durante la búsqueda aleatoria.}.
-
-Por último, también se puede apreciar que al aumentar la cantidad de datos, las barras de error se van achicando, con lo cual la varianza del modelo diminuye. En general, el modelo parecería poseer baja varianza para una cantidad de datos $> 200$. De manera tentativa, calculamos el promedio de las deviaciones estándar a partir de este tamaño de dataset, y su valor fue aproximadamente $0.05$.
-
+\vspace{0.5em}
 \begin{figure}[!htbp]
     \centering
     \includegraphics[width=0.49\textwidth]{/files/src/.media/LDALearning.png}
-    \caption{Clasificador \textit{Linear Discriminant Analisis}. Curvas de aprendizaje mostrando la variación del \textit{aucroc} en datos de entrenamiento y validación a medida que se aumenta la cantidad de datos. Las líneas verticales denotan la varianza para cada tamaño de dataset.}
+    \caption{Clasificador \textit{Linear Discriminant Analisis}. Curvas de aprendizaje mostrando la variación del \textit{aucroc} en datos de entrenamiento y validación a medida que se aumenta la cantidad de datos\protect\footnotemark.}
     \label{LDALearning}
 \end{figure}
+\footnotetext{Dado que durante la construcción de las curvas de aprendizaje se aumenta la cantidad de datos de entrenamiento, no nos pareció correcto resetear el \textit{random\_state} en el proceso de $5$-fold cross-validation estratificado que produce cada medición. Luego, los resultados pueden diferir un poco con respecto a los obtenidos durante la búsqueda aleatoria.}
+
+Podemos apreciar que el modelo posee un sesgo bajo, teniendo en cuenta que su performance se estabiliza cerca del valor $0.87$ para validación, al contar con más de $200$ datos, y de $0.95$ para entrenamiento. Esto refleja que el modelo deja de aprender y, en consecuencia, contar con más datos no debería beneficiarlo significativamente. Como detalle interesante, notamos que el mejor valor de \textit{aucroc} luego de estabilizarse fue de $0.88$ para $250$ datos.
+
+Por último, también se puede apreciar que al aumentar la cantidad de datos, la desviación estándar se achica, lo que parece indicar que la varianza del modelo diminuye. En general, el mismo parece poseer baja varianza desde los $200$ datos, en donde la curva se estabiliza. De manera tentativa, calculamos el promedio de las deviaciones estándar a partir de este tamaño de dataset, y su valor fue de aproximadamente $0.05$.
+
 
 \subsection{Support vector machines}
-
-Basándonos en la mejor configuración de hiperparámetros hallada en el ejercicio 3, procedimos a realizar una curva de complejidad variando el C y analizando como varía la performance del SVM. 
-
-El hiperparámetro C permite generar un control de la penalización por errores de clasificación. Un valor mayor de C significa que el modelo penalizará más los errores de clasificación lo cual implica que buscará un hiperplano de separación que clasifique correctamente la mayor cantidad posible de ejemplos de entrenamiento. Por otro lado, un valor de C menor permite que el modelo tolere más errores de clasificación y puede resultar en un hiperplano de separación más general, incluso si esto significa clasificar incorrectamente algunos ejemplos de entrenamiento.
+Basándonos en la mejor configuración de hiperparámetros hallada (ver la Figura \ref{svm}), procedimos a realizar las curva de complejidad y aprendizaje presentadas en la Figura \ref{SVMCurves}.  La curva de complejidad utiliza el hiperparámetro $C$ como proxy. El mismo permite controlar la penalización por errores de clasificación. % Un valor mayor de C significa que el modelo penalizará más los errores de clasificación lo cual implica que buscará un hiperplano de separación que clasifique correctamente la mayor cantidad posible de ejemplos de entrenamiento. Por otro lado, un valor de C menor permite que el modelo tolere más errores de clasificación y puede resultar en un hiperplano de separación más general, incluso si esto significa clasificar incorrectamente algunos ejemplos de entrenamiento.
 
 \begin{figure}[!htbp] 
     \centering
     \includegraphics[width=0.49\textwidth]{/files/src/.media/SVMComplexity.png}
     \includegraphics[width=0.49\textwidth]{/files/src/.media/SVMLearning.png}
-    \caption{Clasificador \textit{SVM}. Izquierda: Curvas de complejidad mostrando la variación del \textit{aucroc} a medida que se aumenta \textit{C}. Derecha: Curvas de aprendizaje mostrando la variación del \textit{aucroc} a medida que se aumenta el tamaño del dataset.}
-    \label{SVM}
+    \caption{Clasificador \textit{SVM}. Izquierda: Curvas de complejidad mostrando la variación del \textit{aucroc} a medida que se aumenta \textit{C}. Derecha: Curvas de aprendizaje mostrando la variación de la medida respecto al tamaño del dataset.}
+    \label{SVMCurves}
 \end{figure}
 
-Como se puede ver en la Figura \ref{SVM}, el hiperparámetro C afecta a la performance del algoritmo, aunque no de forma considerable. En base a lo observado el algoritmo es bastante bueno para modelar el problema, ya que sin importar el C elegido la media de AUCROC es bastante alta. En cambio un C incorrecto genera que la varianza de la performance de los folds sea alta, por lo que elegir el C correcto pareciera tener un mayor impacto en la estabilidad del modelo que en la performance.
+Como se puede ver en la Figura \ref{SVMCurves}, el hiperparámetro $C$ afecta a la performance del algoritmo, aunque no de forma considerable. El mismo parece ser bastante bueno para modelar el problema, ya que sin importar el valor elegido para este parámetro, el \textit{aucroc} promedio es alto. De todas maneras, una elección incorrecta de $C$ parece causar una varianza alta dentro de los folds durante la validación cruzada, por lo que parece tener un mayor impacto en la estabilidad del modelo que en la performance.
+ 
+Por su parte, la curva de aprendizaje en la Figura \ref{svm} nos permite determinar que la cantidad de datos es suficiente para armar un modelo decente, ya que a partir de los $250$ datos, pareciera mantener una performance constante. Algo a destacar es que, a diferencia de \textit{árboles de decisión}, la desviación estándar, incluso al considerar casi todos los datos, sigue mostrando una gran variabilidad, lo cual denota una posible inestabilidad del algoritmo. 
 
-La curva de aprendizaje en la Figura \ref{SVM} nos permite determinar que la cantidad de datos es suficiente para armar un modelo decente de SVM, ya que a partir de 250 datos, pareciera mantener una performance constante sin denotar una clara tendencia creciente. Algo a destacar es que, a diferencia de árboles de decisión, las barras de error incluso considerando casi todos los datos, siguen mostrando una gran variabilidad en tamaño, lo cual denota una posible inestabilidad del algoritmo.
+A partir de esta cantidad, se asienta un sesgo mediano, visible en la diferencia entre la curva de aprendizaje de entrenamiento y aquella de validación. El hecho que esta primer curva nunca baje de un valor de $1$ da indicios de una posible tendencia del modelo a sobreajustar. 
 
-\subsection{Random Forest}
+\subsection{Random forests}
 
 Primero realizamos un Random Search para encontrar hiperparámetros decentes para Criterion y para maxdepth. Luego realizamos una curva de complejidad variando el maxfeatures, que nos serviría para entender como afecta este hiperparámetro a la performance del Algoritmo. 
 
@@ -70,7 +77,7 @@ Por otro lado, la figura nos muestra otro resultado que no es tan intuitivo, que
 
 La posible explicación para porque puede ser contraproducente tener un maxfeatures muy alto es que mientras más atributos se consideren en cada corte, menos variabilidad vamos a encontrar entre los árboles que componen el bosque. Es decir, los árboles resultantes van a ser más parecidos entre sí, lo cual genera un \textit{overfitting} de los datos.  
 
-Concluimos que tiene sentido tomar logaritmo o sqrt de la cantidad de atributos de los datos para mantener maxfeatures dependiente de la cantidad de atributos, pero que sea realativamente bajo para tener una buena performance y minimizar la complejidad computacional. 
+Concluimos que tiene sentido tomar logaritmo o sqrt de la cantidad de atributos de los datos para mantener maxfeatures dependiente de la cantidad de atributos, pero que sea realativamente bajo para tener una buena performance y minimizar la complejidad computacional.  
 
 Por otro lado, graficamos una curva de aprendizaje (Figura \ref{RF}) para determinar si sería útil o no conseguir más datos. Lo que observamos a partir de la figura, es que a partir de 200 datos la performance del algoritmo parece mantenerse constante sin notar una tendencia alcista. Concluimos que la cantidad de datos provista es suficiente como para generar un modelo decente basado en random forest. 
 
