@@ -7,13 +7,13 @@ Para este clasificador, se considerarán los siguientes hiperparámetros y rango
 
 \begin{itemize}
     \item El criterio de corte: permitimos todos los criterios implementados por el algoritmo. Estos son \textit{Gini}, \textit{Entropy} y \textit{Log loss}. 
-    \item La profundidad máxima: permitimos que varie en el rango $[3,\ \lfloor\sqrt{n} \rfloor]$ de manera uniforme, con $n=451$, bajo la suposición que un árbol \textit{corto} es preferible tanto a un \textit{stump} como a un árbol profundo.
+    \item La profundidad máxima: permitimos que varie en el rango $[3,\ \lfloor\sqrt{n} \rfloor]$ de manera uniforme, con $n=449$, bajo la suposición que un árbol \textit{corto} es preferible tanto a un \textit{stump} como a un árbol profundo.
     \item La cantidad de atributos máxima a considerar por corte: permitimos que varíe de manera uniforme sobre $[1, p]$, con $p = 200$.
 \end{itemize}
 
-Si bien se exploraron de manera tentativa otros hiperparámetros, se decidió no agregarlos a la búsqueda general, ya que  parecían no influir positivamente en los resultados. Basamos esta idea, también, en que consideramos que la cantidad de restricciones agregadas es inversamente proporcional a la probabilidad de encontrar una buena combinación de hiperparámetros, en especial cuando la influencia de los hiperparámetros no pareceria ser igual. 
+Si bien se exploraron de manera tentativa otros hiperparámetros, se decidió no agregarlos a la búsqueda general, ya que  parecían no influir positivamente en los resultados. Basamos esta idea, también, en que consideramos que la cantidad de restricciones agregadas es inversamente proporcional a la probabilidad de encontrar una buena combinación de hiperparámetros, en especial cuando la influencia de los hiperparámetros no parece ser igual. 
 
-La Figura \ref{random_tree} muestra los $5$ mejores candidatos obtenidos. Los resultados respaldan la supocisión de que un árbol corto es mejor a uno profundo (notar que $\lfloor\sqrt{n} \rfloor = 21$).
+La Figura \ref{random_tree} muestra los $5$ mejores candidatos obtenidos. Los resultados respaldan la supocisión que un árbol corto es mejor a uno profundo (notar que $\lfloor\sqrt{n} \rfloor = 21$).
 
 \vspace{0.5em}
 \begin{figure}[!htbp]
@@ -39,44 +39,46 @@ Si bien el criterio de corte influye, la similitud entre Gini y Entropía llevan
 En este caso, se utilizará el clasificador \textit{KNeighborsClassifier} de \textit{scikit-learn} con las siguientes opciones de hiperparámetros.
 
 \begin{itemize}
-    \item Cantidad de vecinos más cercanos: permitimos que sigan una distribución \textit{LogUniform(10, n/2)}. La cota inferior de $10$ porque para valores más bajos no encontramos evidencia empírica que mejore la performance. 
-    \item Eleccion de pesos por vecino: Permitimos \textit{Uniform} donde cada instancia se pondera por igual, o \textit{Distance} donde los vecinos más cercanos tendrán un peso más determinante que los demás.
-    \item Eleccion de metrica: Optamos que se usen las métricas usuales \textit{l1}, \textit{l2}, \textit{l3} y \textit{l4}. 
+    \item Cantidad de vecinos más cercanos: permitimos que sigan una distribución \textit{logUniforme} en el rango $[10, n/2]$.
+    \item Eleccion de pesos por vecino: permitimos las opciones \textit{Uniform} ---donde cada instancia se pondera por igual---, y \textit{Distance} ---donde los vecinos más cercanos tienen un peso más determinante que los demás---.
+    \item Eleccion de metrica: optamos que se usen las métricas usuales \textit{l1}, \textit{l2}, \textit{l3} y \textit{l4}. 
 \end{itemize}
 
-Se seleccionó una distribución \textit{LogUniforme} para determinar el valor de kk, dado que resulta conveniente evitar valores excesivamente grandes, los cuales podrían inducir overfitting. Al generar 100 muestras de esta distribución y establecer una cota inferior adecuada, se busca controlar el riesgo de underfitting.
+Se seleccionó una distribución \textit{LogUniforme} ya que resulta conveniente evitar valores excesivamente grandes, los cuales podrían inducir un sobreajuste. Del mismo modo, la cota inferior busca controlar el riesgo de subajuste. El valor de $10$ se obtuvo a prueba y error. Al intentar con valores más bajos, no notamos mejoras en la performance. 
 
-Observando la Figura \ref{knn}, se identificó que la elección de pesos ponderados basados en la distancia, combinados con la métrica 1 (l1), pareciera ser óptima para el problema en cuestión.
-Además, la búsqueda aleatoria permitió determinar un rango apropiado de vecinos, comprendido entre 10 y 30.
+La Figura \ref{knn} muestra los resultados. La elección de pesos ponderados basados en la distancia, combinados con la métrica $l1$, parecen dar buenos resultados. Además, la búsqueda aleatoria permitió determinar un rango apropiado de vecinos, comprendido entre $10$ y $30$.
+
+Vale la pena mencionar que se repitió este experimento con distintos tipos de normalización y estandarización de los datos. Se probó transformar los datos con los preprocesadores \textit{StandardScaler}, \textit{MaxAbsScaler} y \textit{RobustScaler} de \textit{scikit-learn} para evitar los problemas de escalas. Sin embargo, sus resultados fueron peores, por lo que optamos por no incluirlos.
+  
 \vspace{0.5em}
 \begin{figure}[!htbp]
     \begin{center}
         \begin{tabular}{ |c|c|c|c| } 
          \hline
-        N   & Eleccion de pesos & P  & aucroc (validación) \\
+        Cantidad de vecinos & Eleccion de pesos & Metrica  & aucroc (validación) \\
         \hline
-        $15$             & Distance          &  $1$             & $0.8391$  \\ 
-        $11$             & Distance          &  $1$             & $0.8386$  \\
-        $14$             & Distance          &  $1$             & $0.8375$  \\ 
-        $13$             & Distance          &  $1$             & $0.8360$  \\
-        $26$             & Distance          &  $1$             & $0.8287$  \\ 
+        $15$             & Distance          & \textit{l1} & $0.8391$  \\ 
+        $11$             & Distance          & \textit{l1} & $0.8386$  \\
+        $14$             & Distance          & \textit{l1} & $0.8375$  \\ 
+        $13$             & Distance          & \textit{l1} & $0.8360$  \\
+        $26$             & Distance          & \textit{l1} & $0.8287$  \\ 
         \hline
         \end{tabular}
     \end{center}
-    \caption{mejores resultados para la búsqueda aleatoria de hiperparámetros para \textit{k-nearest neighbours}.} \label{knn}
+    \caption{mejores resultados para la búsqueda aleatoria de hiperparámetros en el caso de \textit{k-nearest neighbours}.} \label{knn}
 \end{figure}
 
 \subsection{Linear discriminant analysis}
-La busqueda, para el clasificador \textit{LinearDiscriminantAnalysis} de \textit{scikit-learn} fue llevada a cabo con los siguientes hiperparámetros: 
+Utilizaremos el clasificador \textit{LinearDiscriminantAnalysis} de \textit{scikit-learn} con los siguientes hiperparámetros. 
 
 \begin{itemize}
-    \item Solver: Permitimos los algoritmos basados en \textit{LSQR}, \textit{SVD} y \textit{EIGEN}.
-    \item El metodo de contraccion: Cuando no se este usando SVD, permitimos que siga una distribucion $Uniforme(0,1)$.
+    \item Solver: permitimos las implementaciones basadas en \textit{lsqr}, \textit{svd} y \textit{eigen} provistas por el clasificador.
+    \item Método de contracción: para las implementaciones de \textit{lsqr} y \textit{eigen}, permitimos que varie en el rango $[0, 1]$ de manera uniforme.
 \end{itemize}
 
-Se exploraron otros hiperparámetros, pero optamos por no agregarlos debido a que no parecian influir de forma significativa en los resultados finales. 
+% Se exploraron otros hiperparámetros, pero optamos por no agregarlos debido a que no parecian influir de forma significativa en los resultados finales. 
 
-Al observar la Figura \ref{lda}, notamos que la elección del Solver (Eigen o Lsqr) parece no influir significativamente. Más bien, resulta más determinante el uso de un parámetro de contracción adecuado, que parece rondar los $0.26$. Finalmente, se observa que el uso de SVD no conduce a una buena performance.
+La Figura \ref{lda} muestra los resultados. Notamos que la elección del Solver no parece influir significativamente en los casos de \textit{eigen} y \textit{lsqr}, pero sí en el caso de \textit{svd}, donde la performance fue marcademente peor. En base a esto, consideramos más importante el uso de un método de contracción adecuado.
 
 \vspace{0.5em}
 \begin{figure}[!htbp]
@@ -93,19 +95,24 @@ Al observar la Figura \ref{lda}, notamos que la elección del Solver (Eigen o Ls
         \hline
         \end{tabular}
     \end{center}
-    \caption{Mejores resultados para la búsqueda aleatoria de hiperparámetros para \textit{linear discriminant analysis}.} \label{lda}
+    \caption{Mejores resultados para la búsqueda aleatoria de hiperparámetros en el caso de \textit{linear discriminant analysis}.} \label{lda}
 \end{figure}
 
-\subsection{Support vector machines}
-Realizamos la busqueda, para el modelo \textit{Support Vector Machines}. Llevada a cabo con el clasificador \textit{SVC} de \textit{scikit-learn}, usamos los siguientes hiperparámetros y rangos: 
+\subsection{Support vector machines} En este caso, buscaremos buenos hiperparámetros para el clasificador \textit{SVC} de \textit{scikit-learn}. Consideramos los siguientes parámetros y rangos. 
 
 \begin{itemize}
-    \item Parámetro de regularización: Optamos porque siga una distribucion \textit{LogUniform(1e-5,1e2)}, como el valor es inversamente proporcional a `C` es relevante que tome mas valores chicos que grandes pues hara que la suma poderada de errores de las instancias que estan en el lado equivocado de la frontera de decision, tenga un grado mas de tolerancia.
-    \item Kernel: Permitimos \textit{linear}, \textit{poly}, \textit{rbf} (función de base radial) y \textit{sigmoid} (función tanh).
-    \item Coeficiente de Kernel: Decidimos elegir entre \textit{scale}, que toma $ \gamma = \frac{1}{p*X.var()}$, u \textit{auto} con $\gamma = \frac{1}{p} $, donde $p=200$ (cantidad de genes).
+    \item C: permitimos una distribucion $\textit{logUniforme}$ en el rango $[1\times10^{-5}, 1\times10^{2}]$. Este parámetro es inversamente proporcional a la tolerancia del modelo respecto a los errores de clasificación.
+    \item Kernel: permitimos los kernels \textit{linear}, \textit{poly}, \textit{rbf} (función de base radial) y \textit{sigmoid} (función tanh) provistos por el algoritmo.
+    \item Coeficiente de kernel: decidimos elegir entre \textit{scale}, que toma $\gamma = 1/(p\cdot\text{Var}[D_{train}])$, y \textit{auto}, con $\gamma = 1/p$.
+    \item Grado: permitimos que varíe de manera uniforme en el rango $[2, 10]$. Este hiperparámetro solo se utiliza en el kernel \textit{poly}.
 \end{itemize}
 
-En la Figura \ref{support vector machines}, se observa que la configuración más relevante, a priori, es que $\gamma$ este escalado, que busca normalizar la influencia de las características en el cálculo de la función de kernel. Esta normalización es especialmente útil para conjuntos de datos que contienen características de diferentes escalas. Además, se destaca que el kernel de función de base radial resultó ser el más exitoso. Aunque no parece que el parámetro C tenga una influencia significativa, los valores seleccionados no fueron muy grandes. Es importante señalar que los grados solo se consideran en los kernels \textit{poly}; por lo tanto, no tienen relevancia para los demás tipos de kernel.
+La Figura \ref{support vector machines} muestra los resultados. Se observa que la configuración más relevante, a priori, corresponde a $\gamma$ escalado. Este hiperparámetro busca normalizar la influencia de las instancias en el cálculo de la función del kernel. Esta normalización es especialmente útil para conjuntos de datos que contienen instancias de diferentes escalas, como es el caso de $D_{train}$. Además, se destaca que el kernel de función de base radial resultó ser el más exitoso. 
+
+Aunque no parezca que el parámetro C tenga una influencia significativa, los valores seleccionados no fueron muy grandes, por lo que se probaron modelos más permisivos, lo que podría ayudar a reducir las chances de sobreajuste del modelo. 
+
+Es importante señalar, tambien, que como los grados sólo se consideran en los kernels \textit{poly}, no tienen relevancia para los demás tipos de kernel.
+
 \vspace{0.5em}
 \begin{figure}[!htbp]
     \begin{center}
@@ -121,18 +128,18 @@ En la Figura \ref{support vector machines}, se observa que la configuración má
         \hline
         \end{tabular}
     \end{center}
-    \caption{mejores resultados para la búsqueda aleatoria de hiperparámetros para \textit{support vector machines}.} \label{support vector machines}
+    \caption{mejores resultados para la búsqueda aleatoria de hiperparámetros en el caso de \textit{support vector machines}.} \label{support vector machines}
 \end{figure}
 
 \subsection{Gaussian naïve bayes}
-Se examinó por último el rendimiento del clasificador \textit{GaussianNB} de \textit{scikit-learn}. Los hiperparámetros de este algoritmo a optimizar y sus rangos fueron:
+Se examinará por último el rendimiento del clasificador \textit{GaussianNB} de \textit{scikit-learn}. Los hiperparámetros de este algoritmo a optimizar y sus rangos son:
 
 \begin{itemize}
     \item Las probabilidades a priori de las clases: permitimos que varíen de manera normal con \textit{media} igual a las probabilidades a priori empíricas (ver Figura \ref{distribucion}) y una \textit{desviación estándar} de $\sigma = 0.1$.
-    \item El suavizado de varianza: permitimos que varíe uniformemente en el rango $[0, 1 \times 10^{-2}]$.
+    \item El suavizado de varianza: permitimos que varíe uniformemente en el rango $[0,\ 1 \times 10^{-2}]$.
 \end{itemize}
 
-Como valor predeterminado, \textit{GaussianNB} considera las \textit{probabilidades a priori} de cada clase como sus respectivas proporciones en el dataset. Para ampliar el rango de búsqueda, en lugar de usar las probabilidades originales se utilizaron valores aleatorios cercanos a estas.
+Como valor predeterminado, \textit{GaussianNB} considera las \textit{probabilidades a priori} de cada clase como sus respectivas proporciones en el dataset. Para ampliar el rango de búsqueda, en lugar de usar las probabilidades originales, se utilizaron valores aleatorios cercanos a estas.
 
 Por otro lado, el \textit{suavizado de varianza} indica la cantidad que se suma a todas las varianzas de los atributos para evitar que sean cero\footnote{Su valor representa el porcentaje de la varianza más alta a sumarle a todas las demás.}, lo cual podría producir errores numéricos durante el cálculo de las distribuciones normales. Aunque tiene un valor predeterminado de $1 \times 10^{-9}$, probamos con números al azar hasta $1 \times 10^{-2}$.
 
@@ -153,6 +160,6 @@ Al observar la Figura \ref{naive_bayes}, podemos destacar dos hallazgos interesa
         \hline
         \end{tabular}
     \end{center}
-    \caption{mejores resultados para la búsqueda aleatoria de hiperparámetros para \textit{naïve bayes}.} \label{naive_bayes}
+    \caption{mejores resultados para la búsqueda aleatoria de hiperparámetros en el caso de \textit{naïve bayes}.} \label{naive_bayes}
 \end{figure}
 
