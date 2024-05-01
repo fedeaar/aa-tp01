@@ -1,13 +1,3 @@
-% En este punto, se pide inspeccionar **tres** de sus mejores modelos encontrados hasta ahora de cada familia de modelos: la mejor configuración para el árbol de decisión, la mejor configuración para LDA y la mejor configuración para SVM. Para ello:
-
-% 1. Graficar curvas de complejidad para cada modelo (excepto para LDA), variando la profundidad en el caso de árboles, y el hiperparámetro C en el caso de SVM. Diagnosticar cómo afectan al sesgo y a la varianza esos dos hiperparámetros.
-% 2. Graficar curvas de aprendizaje para cada modelo. En base a estas curvas, sacar conclusiones sobre si los algoritmos parecen haber alcanzado su límite, o bien si aumentar la cantidad de datos debería ayudar.
-% 3. Construir un modelo **RandomForest** con 200 árboles. Explorar para qué sirve el hiperparámetro max_features y cómo afecta a la performance del algoritmo mediante una curva de complejidad. Explicar por qué creen que se dieron los resultados obtenidos. Por último, graficar una curva de aprendizaje sobre los parámetros elegidos para determinar si sería útil o no conseguir más datos.
-
-% **Atención**: Tener en cuenta que debemos seguir utilizando AUC ROC como métrica para estas curvas.
-
-% Para cada método pueden incluir hasta una carilla de texto y los gráficos que considere relevantes.
-
 Evaluados los distintos algoritmos, en esta sección vamos a inspeccionar los mejores modelos encontrados para los clasificadores \textit{árboles de decisión}, \textit{linear discriminant analysis}, \textit{support vector machines} y \textit{random forests}. En particular, vamos a buscar entender su comportamiento al aumentar su complejidad (variando alguno de sus hiperparámentros), trazar sus curvas de aprendizaje, y sacar conclusiones sobre sus varianzas y sesgo. Por último, los compararemos con un clasificador de tipo \textit{random forest}.
 
 \subsection{Árboles de decisión}
@@ -15,7 +5,7 @@ Para el mejor modelo obtenido en la Figura \ref{random_tree}, variamos la \texti
 \begin{figure}[!htbp]
     \centering
     \includegraphics[width=0.75\textwidth]{/files/src/.media/decisionTreeComplexity.png}
-    \caption{Curvas de complejidada para el clasificador \textit{decision tree}, mostrando la variación del AUC ROC en datos de entrenamiento y validación a medida que se aumenta su profundida máxima. Las lineas verticales denotan la varianza para cada valor del atributo.}
+    \caption{Curvas de complejidada para el clasificador \textit{decision tree}, mostrando la variación del AUC ROC en datos de entrenamiento y validación a medida que se aumenta su profundidad máxima. Las líneas verticales denotan la varianza para cada valor del atributo.}
     \label{decisionTreeComplexity}
 \end{figure}
 
@@ -25,12 +15,12 @@ Por otro lado, todos los resultados del algoritmo en validación se encuentran c
 
 % 2. Graficar curvas de aprendizaje para cada modelo. En base a estas curvas, sacar conclusiones sobre si los algoritmos parecen haber alcanzado su límite, o bien si aumentar la cantidad de datos debería ayudar.
 
-Variando la cantidad de datos de entrenamiento en el rango $[30, n]$ con un step de $10$, siendo $n$ la cantidad total de instancias, obtuvimos las curvas de aprendizaje de la Figura \ref{decisionTreeLearning}. De ellas podemos observar que, con pocos datos ($< 150$ instancias), el modelo parecería funcionar igual, a veces hasta peor, que un clasificador aleatorio, con un AUC ROC en promediado rondando el $0.5$. Al aumentar la cantidad de datos, puede observarse como ambas curvas se van acercando entre si, para luego estabilizarse en los valores $0.85$ para el set de entrenamiento y $0.6$ para el de validación. Esto indica que el algoritmo, sin importar cuánto aumentemos el tamaño del set de entrenamiento, parecería haber encontrado su límite de aprendizaje.
+Variando la cantidad de datos de entrenamiento en el rango $[30, n]$ con un step de $10$, siendo $n$ la cantidad total de instancias, obtuvimos las curvas de aprendizaje de la Figura \ref{decisionTreeLearning}. De ellas podemos observar que, con pocos datos ($< 150$ instancias), el modelo parecería funcionar igual, a veces hasta peor, que un clasificador aleatorio, con un AUC ROC en promediado rondando el $0.5$. Al aumentar la cantidad de datos, puede observarse como ambas curvas se van acercando entre sí, para luego estabilizarse en los valores $0.85$ para el set de entrenamiento y $0.6$ para el de validación. Esto indica que el algoritmo, sin importar cuánto aumentemos el tamaño del set de entrenamiento, parecería haber encontrado su límite de aprendizaje.
 
 \begin{figure}[!htbp]
     \centering
     \includegraphics[width=0.75\textwidth]{/files/src/.media/decisionTreeLearning.png}
-    \caption{Curvas de aprendizaje para el clasificador \textit{decision tree}, mostrando la variación del AUC ROC en datos de entrenamiento y validación a medida que se aumenta la cantidad de datos. Las lineas verticales denotan la varianza para cada tamaño de dataset.}
+    \caption{Curvas de aprendizaje para el clasificador \textit{decision tree}, mostrando la variación del AUC ROC en datos de entrenamiento y validación a medida que se aumenta la cantidad de datos. Las líneas verticales denotan la varianza para cada tamaño de dataset.}
     \label{decisionTreeLearning}
 \end{figure}
 
@@ -50,7 +40,7 @@ El hiperparámetro C permite generar un control de la penalización por errores 
     \label{SVMComplexity}
 \end{figure}
 
-Como se puede ver en el gráfico, el hiperparámetro C afecta a la performance del algoritmo, aunque no de forma considerable. En base a lo observado el algoritmo es bastante bueno para modelar el problema ya que sin importar el C elegido la media de AUCROC es bastante alta. En cambio un C incorrecto genera que la varianza de la performance de los folds sea alta, por lo que elegir el C correcto pareciera tener un mayor impacto en la estabilidad del modelo que en la performance.
+Como se puede ver en la Figura \ref{SVMComplexity}, el hiperparámetro C afecta a la performance del algoritmo, aunque no de forma considerable. En base a lo observado el algoritmo es bastante bueno para modelar el problema, ya que sin importar el C elegido la media de AUCROC es bastante alta. En cambio un C incorrecto genera que la varianza de la performance de los folds sea alta, por lo que elegir el C correcto pareciera tener un mayor impacto en la estabilidad del modelo que en la performance.
 
 \begin{figure}[!htbp]
     \centering
@@ -59,7 +49,7 @@ Como se puede ver en el gráfico, el hiperparámetro C afecta a la performance d
     \label{SVMLearning}
 \end{figure}
 
-El gráfico de la curva de aprendizaje nos permite determinar que la cantidad de datos es suficiente para armar un modelo decente de SVM ya que a partir de 250 datos, pareciera mantener una performance constante sin denotar una clara tendencia creciente. Algo a destacar es que, a diferencia de árboles de decisión, las barras de error incluso considerando casi todos los datos, siguen mostrando una gran variabilidad en tamaño, lo cual denota una posible inestabilidad del algoritmo.
+La curva de aprendizaje en la Figura \ref{SVMLearning} nos permite determinar que la cantidad de datos es suficiente para armar un modelo decente de SVM, ya que a partir de 250 datos, pareciera mantener una performance constante sin denotar una clara tendencia creciente. Algo a destacar es que, a diferencia de árboles de decisión, las barras de error incluso considerando casi todos los datos, siguen mostrando una gran variabilidad en tamaño, lo cual denota una posible inestabilidad del algoritmo.
 
 \subsection{Random Forest}
 
@@ -73,13 +63,13 @@ Primero realizamos un Random Search para encontrar hiperparámetros decentes par
 \end{figure}
 
 
-La figura nos muestra algo que tiene sentido que es que cuando maxfeatures es muy bajo genera un impacto negativo en la performance del algoritmo. Esto tiene sentido ya que maxfeatures representa la cantidad de atributos tomados de manera aleatoria que cada decision tree que compone el forest va a considerar en cada paso del algoritmo. Es lógico que si considerás muy pocos atributos para realizar los cortes no encuentres buenas opciones y por lo tanto tengas un modelo defectuoso.
+La figura \ref{RFComplexity} nos muestra algo que tiene sentido que es que cuando maxfeatures es muy bajo genera un impacto negativo en la performance del algoritmo. Esto tiene sentido ya que maxfeatures representa la cantidad de atributos tomados de manera aleatoria que cada decision tree que compone el forest va a considerar en cada paso del algoritmo. Es lógico que si considerás muy pocos atributos para realizar los cortes no encuentres buenas opciones y por lo tanto tengas un modelo defectuoso.
 
-Por otro lado, la figura nos muestra otro resultado que no es tan intuitivo, que es que maxfeatures rápidamente alcanza su límite en el impacto en la performance y luego a medida que sigue aumentando, incluso pareciera decrecer ligeramente. Este resultado es particularmente atractivo ya que si bien a medida que crece no mejora considerablemente la performance, si afecta directamente el costo computacional. 
+Por otro lado, la figura nos muestra otro resultado que no es tan intuitivo, que es que maxfeatures rápidamente alcanza su límite en el impacto en la performance y luego a medida que sigue aumentando, incluso pareciera decrecer ligeramente. Este resultado es particularmente atractivo, ya que si bien a medida que crece no mejora considerablemente la performance, si afecta directamente el costo computacional. 
 
-La posible explicación para porque puede ser contraproducente tener un maxfeatures muy alto es que mientras mas atributos se consideren en cada corte, menos variabilidad vamos a encontrar entre los árboles que componen el bosque. Es decir, los árboles resultantes van a ser más parecidos entre sí, lo cual genera un \textit{overfitting} de los datos.  
+La posible explicación para porque puede ser contraproducente tener un maxfeatures muy alto es que mientras más atributos se consideren en cada corte, menos variabilidad vamos a encontrar entre los árboles que componen el bosque. Es decir, los árboles resultantes van a ser más parecidos entre sí, lo cual genera un \textit{overfitting} de los datos.  
 
-Concluimos que tiene sentido tomar logaritmo o sqrt de la cantidad de atributos de los datos, para mantener maxfeatures dependiente de la cantidad de atributos pero que sea realativamente bajo, para tener una buena performance y minimizar la complejidad computacional. 
+Concluimos que tiene sentido tomar logaritmo o sqrt de la cantidad de atributos de los datos para mantener maxfeatures dependiente de la cantidad de atributos, pero que sea realativamente bajo para tener una buena performance y minimizar la complejidad computacional. 
 
 \begin{figure}[!htbp]
     \centering
@@ -89,6 +79,6 @@ Concluimos que tiene sentido tomar logaritmo o sqrt de la cantidad de atributos 
 \end{figure}
 
 
-Por otro lado, graficamos una curva de aprendizaje para determinar si sería útil o no conseguir más datos. Lo que observamos a partir de la figura, es que a partir de 200 datos la performance del algoritmo parece mantenerse constante sin notar una tendencia alcista. Concluimos que la cantidad de datos provista es suficiente como para generar un modelo decente basado en random forest. 
+Por otro lado, graficamos una curva de aprendizaje (Figura \ref{RFLearning}) para determinar si sería útil o no conseguir más datos. Lo que observamos a partir de la figura, es que a partir de 200 datos la performance del algoritmo parece mantenerse constante sin notar una tendencia alcista. Concluimos que la cantidad de datos provista es suficiente como para generar un modelo decente basado en random forest. 
 
 Algo interesante a destacar de la curva de aprendizaje del random forest es que las barras de error son consistentemente pequeñas a medida que se aumentan los datos. 

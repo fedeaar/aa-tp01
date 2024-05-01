@@ -7,13 +7,13 @@ Para este clasificador, se considerarán los siguientes hiperparámetros y rango
 
 \begin{itemize}
     \item El criterio de corte: permitimos todos los criterios implementados por el algoritmo. Estos son \textit{Gini}, \textit{Entropy} y \textit{Log loss}. 
-    \item La profundidad máxima: permitimos que varie en el rango $[3,\ \lfloor\sqrt{n} \rfloor]$ de manera uniforme, con $n=449$, bajo la suposición que un árbol \textit{corto} es preferible tanto a un \textit{stump} como a un árbol profundo.
+    \item La profundidad máxima: permitimos que varíe en el rango $[3,\ \lfloor\sqrt{n} \rfloor]$ de manera uniforme, con $n=449$, bajo la suposición que un árbol \textit{corto} es preferible tanto a un \textit{stump} como a un árbol profundo.
     \item La cantidad de atributos máxima a considerar por corte: permitimos que varíe de manera uniforme sobre $[1, p]$, con $p = 200$.
 \end{itemize}
 
-Si bien se exploraron de manera tentativa otros hiperparámetros, se decidió no agregarlos a la búsqueda general, ya que  parecían no influir positivamente en los resultados. Basamos esta idea, también, en que consideramos que la cantidad de restricciones agregadas es inversamente proporcional a la probabilidad de encontrar una buena combinación de hiperparámetros, en especial cuando la influencia de los hiperparámetros no parece ser igual. 
+Si bien se exploraron de manera tentativa otros hiperparámetros, se decidió no agregarlos a la búsqueda general, ya que parecían no influir positivamente en los resultados. Basamos esta idea, también, en que consideramos que la cantidad de restricciones agregadas es inversamente proporcional a la probabilidad de encontrar una buena combinación de hiperparámetros, en especial cuando la influencia de los hiperparámetros no parece ser igual. 
 
-La Figura \ref{random_tree} muestra los $5$ mejores candidatos obtenidos. Los resultados respaldan la supocisión que un árbol corto es mejor a uno profundo (notar que $\lfloor\sqrt{n} \rfloor = 21$).
+La Figura \ref{random_tree} muestra los $5$ mejores candidatos obtenidos. Los resultados respaldan la suposición que un árbol corto es mejor a uno profundo (notar que $\lfloor\sqrt{n} \rfloor = 21$).
 
 \vspace{0.5em}
 \begin{figure}[!htbp]
@@ -55,7 +55,7 @@ Vale la pena mencionar que se repitió este experimento con distintos tipos de n
     \begin{center}
         \begin{tabular}{ |c|c|c|c| } 
          \hline
-        Cantidad de vecinos & Eleccion de pesos & Metrica  & aucroc (validación) \\
+        Cantidad de vecinos & Elección de pesos & Métrica & aucroc (validación) \\
         \hline
         $15$             & Distance          & \textit{l1} & $0.8391$  \\ 
         $11$             & Distance          & \textit{l1} & $0.8386$  \\
@@ -73,12 +73,12 @@ Utilizaremos el clasificador \textit{LinearDiscriminantAnalysis} de \textit{scik
 
 \begin{itemize}
     \item Solver: permitimos las implementaciones basadas en \textit{lsqr}, \textit{svd} y \textit{eigen} provistas por el clasificador.
-    \item Método de contracción: para las implementaciones de \textit{lsqr} y \textit{eigen}, permitimos que varie en el rango $[0, 1]$ de manera uniforme.
+    \item Método de contracción: para las implementaciones de \textit{lsqr} y \textit{eigen}, permitimos que varíe en el rango $[0, 1]$ de manera uniforme.
 \end{itemize}
 
 % Se exploraron otros hiperparámetros, pero optamos por no agregarlos debido a que no parecian influir de forma significativa en los resultados finales. 
 
-La Figura \ref{lda} muestra los resultados. Notamos que la elección del Solver no parece influir significativamente en los casos de \textit{eigen} y \textit{lsqr}, pero sí en el caso de \textit{svd}, donde la performance fue marcademente peor. En base a esto, consideramos más importante el uso de un método de contracción adecuado.
+La Figura \ref{lda} muestra los resultados. Notamos que la elección del Solver no parece influir significativamente en los casos de \textit{eigen} y \textit{lsqr}, pero sí en el caso de \textit{svd}, donde la performance fue marcadamente peor. En base a esto, consideramos más importante el uso de un método de contracción adecuado.
 
 \vspace{0.5em}
 \begin{figure}[!htbp]
@@ -101,7 +101,7 @@ La Figura \ref{lda} muestra los resultados. Notamos que la elección del Solver 
 \subsection{Support vector machines} En este caso, buscaremos buenos hiperparámetros para el clasificador \textit{SVC} de \textit{scikit-learn}. Consideramos los siguientes parámetros y rangos. 
 
 \begin{itemize}
-    \item C: permitimos una distribucion $\textit{logUniforme}$ en el rango $[1\times10^{-5}, 1\times10^{2}]$. Este parámetro es inversamente proporcional a la tolerancia del modelo respecto a los errores de clasificación.
+    \item C: permitimos una distribución $\textit{logUniforme}$ en el rango $[1\times10^{-5}, 1\times10^{2}]$. Este parámetro es inversamente proporcional a la tolerancia del modelo respecto a los errores de clasificación.
     \item Kernel: permitimos los kernels \textit{linear}, \textit{poly}, \textit{rbf} (función de base radial) y \textit{sigmoid} (función tanh) provistos por el algoritmo.
     \item Coeficiente de kernel: decidimos elegir entre \textit{scale}, que toma $\gamma = 1/(p\cdot\text{Var}[D_{train}])$, y \textit{auto}, con $\gamma = 1/p$.
     \item Grado: permitimos que varíe de manera uniforme en el rango $[2, 10]$. Este hiperparámetro solo se utiliza en el kernel \textit{poly}.
@@ -111,7 +111,7 @@ La Figura \ref{support vector machines} muestra los resultados. Se observa que l
 
 Aunque no parezca que el parámetro C tenga una influencia significativa, los valores seleccionados no fueron muy grandes, por lo que se probaron modelos más permisivos, lo que podría ayudar a reducir las chances de sobreajuste del modelo. 
 
-Es importante señalar, tambien, que como los grados sólo se consideran en los kernels \textit{poly}, no tienen relevancia para los demás tipos de kernel.
+Es importante señalar, también, que como los grados sólo se consideran en los kernels \textit{poly}, no tienen relevancia para los demás tipos de kernel.
 
 \vspace{0.5em}
 \begin{figure}[!htbp]
