@@ -1,6 +1,6 @@
 A partir de los resultados del árbol \textit{simple}, interesa explorar el uso de distintos algoritmos de aprendizaje que puedan arrojar mejores resultados. En particular, evaluaremos la performance de los \textit{árboles de decisión}, \textit{k-nearest neighbours}, \textit{linear discriminant analysis}, \textit{support vector machines} y \textit{gaussian naïve bayes} en términos de \textit{aucroc} promedio. Para cada uno, realizaremos una búsqueda aleatoria con el objetivo de encontrar buenos hiperparámetros, guiados por nuestras propias suposiciones respecto a cuáles pueden llegar a importar y en qué rangos de valores.
 
-La búsqueda se realizará con \textit{RandomizedSearchCV} de \textit{scikit-learn}, utilizando como mecanismo de evaluación $5$-fold cross-validation estratificado. Se harán $100$ iteraciones por algoritmo.
+La búsqueda se realizará con \textit{RandomizedSearchCV} de \textit{scikit-learn}, utilizando como mecanismo de evaluación $5$-fold cross validation estratificado. Se harán $100$ iteraciones por algoritmo.
 
 \subsection{Árboles de decisión}
 Para este clasificador, se considerarán los siguientes hiperparámetros y rangos. 
@@ -11,7 +11,7 @@ Para este clasificador, se considerarán los siguientes hiperparámetros y rango
     \item La cantidad de atributos máxima a considerar por corte: permitimos que varíe de manera uniforme sobre $[1, p]$, con $p = 200$.
 \end{itemize}
 
-Si bien se exploraron de manera tentativa otros hiperparámetros, se decidió no agregarlos a la búsqueda general, ya que parecían no influir positivamente en los resultados. Basamos esta idea, también, en que consideramos que la cantidad de restricciones agregadas es inversamente proporcional a la probabilidad de encontrar una buena combinación de hiperparámetros, en especial cuando la influencia de los hiperparámetros no parece ser igual. 
+Si bien se exploraron de manera tentativa otros hiperparámetros, se decidió no agregarlos a la búsqueda general, ya que parecían no influir positivamente en los resultados. Esta elección se basa, también, en que consideramos que la cantidad de restricciones agregadas es inversamente proporcional a la probabilidad de encontrar una buena combinación de hiperparámetros, en especial cuando la influencia de los hiperparámetros no parece ser igual. 
 
 La Figura \ref{random_tree} muestra los $5$ mejores candidatos obtenidos. Los resultados respaldan la suposición que un árbol corto es mejor a uno profundo (notar que $\lfloor\sqrt{n} \rfloor = 21$).
 
@@ -44,7 +44,7 @@ En este caso, se utilizará el clasificador \textit{KNeighborsClassifier} de \te
     \item Eleccion de metrica: optamos que se usen las métricas usuales \textit{l1}, \textit{l2}, \textit{l3} y \textit{l4}. 
 \end{itemize}
 
-Se seleccionó una distribución \textit{LogUniforme} ya que resulta conveniente evitar valores excesivamente grandes, los cuales podrían inducir un sobreajuste. Del mismo modo, la cota inferior busca controlar el riesgo de subajuste. El valor de $10$ se obtuvo a prueba y error. Al intentar con valores más bajos, no notamos mejoras en la performance. 
+Se seleccionó una distribución \textit{logUniforme} ya que resulta conveniente evitar valores excesivamente grandes, los cuales podrían inducir un sobreajuste. Del mismo modo, la cota inferior busca controlar el riesgo de subajuste. El valor de $10$ se obtuvo a prueba y error. Al intentar con valores más bajos, no notamos mejoras en la performance. 
 
 La Figura \ref{knn} muestra los resultados. La elección de pesos ponderados basados en la distancia, combinados con la métrica $l1$, parecen dar buenos resultados. Además, la búsqueda aleatoria permitió determinar un rango apropiado de vecinos, comprendido entre $10$ y $30$.
 
@@ -154,9 +154,9 @@ Al observar la Figura \ref{naive_bayes}, podemos destacar dos hallazgos interesa
         \hline
         $0.6320$ & $0.3680$ & $0.975 \times 10^{-2}$ & $0.8408$ \\ 
         $0.6119$ & $0.3881$ & $0.973 \times 10^{-2}$ & $0.8408$  \\
-        $0.6579$ & $0.3421$ & $0.982 \times 10^{-2}$ & $0.8406$  \\ 
-        $0.8183$ & $0.1817$ & $0.980 \times 10^{-2}$ & $0.8406$  \\
-        $0.5157$ & $0.4843$ & $0.960 \times 10^{-2}$ & $0.8406$  \\ 
+        $0.6579$ & $0.3421$ & $0.982 \times 10^{-2}$ & $0.8407$  \\ 
+        $0.8183$ & $0.1817$ & $0.980 \times 10^{-2}$ & $0.8407$  \\
+        $0.5157$ & $0.4843$ & $0.960 \times 10^{-2}$ & $0.8407$  \\ 
         \hline
         \end{tabular}
     \end{center}

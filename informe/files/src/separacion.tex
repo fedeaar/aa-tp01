@@ -4,7 +4,7 @@ La idea principal es separar los datos en dos conjuntos. Por un lado, un set de 
 
 Consideramos que una buena partición, para la cantidad de datos con los que contamos, reserva entre el $10\%$ y el $20\%$ del dataset para la evaluación final, respetando la distribución de clases original en cada subconjunto. Esto se debe a que, si bien interesa reservar datos para la evaluación, también importa maximizar la cantidad de información con la que contamos durante el entrenamiento.
 
-Notar que, de no dividir los datos, la única opción para evaluar el rendimiento del modelo sería utilizar los mismos datos que se utilizaron para entrenarlo. Esto es mala idea, ya que, por la misma naturaleza de los modelos, estos se acoplan en cierta medida a los datos con los que fueron entrenados. Luego, bastaría con que el modelo memorice las instancias de entrenamiento para obtener un rendimiento óptimo.
+Notar que, de no dividir los datos, la única opción para evaluar el rendimiento del modelo sería utilizar los mismos datos que se utilizaron para entrenarlo. Esto es mala idea, ya que, por la misma naturaleza de los modelos, estos se acoplan en cierta medida a los datos con los que fueron entrenados. Luego, bastaría con memorizar las instancias de entrenamiento para obtener un rendimiento óptimo.
 
 ¿Qué instancias deberíamos incluir en cada subconjunto? Tuvimos en cuenta los siguientes factores:
 
@@ -18,7 +18,7 @@ Con esto en mente, procedimos a separar los datos de la siguiente forma\footnote
 
 \begin{enumerate}
     \item Dividimos el dataset $D$ entre instancias positivas ---\textit{buen pronóstico}--- y negativas ---\textit{mal pronóstico}---. Las desordenamos al azar con un algoritmo de shuffle\footnote{Usamos el generador \textit{default\_rng} de \textit{numpy.random}, con un valor de semilla para permitir la reproducción de los resultados.}: $$D \rightarrow (P, N)$$
-    \item Separamos el último $10\%$ de cada grupo, obteniendo los datos de entrenamiento y evaluación: $$P \rightarrow (P_{train}, P_{test})\ \ \ \text{y}\ \ \ N \rightarrow (N_{train}, N_{test})$$.
+    \item Separamos el último $10\%$ de cada grupo, obteniendo los datos de entrenamiento y evaluación: $$P \rightarrow (P_{train}, P_{test})\ \ \ \text{y}\ \ \ N \rightarrow (N_{train}, N_{test})$$
     \item Obtuvimos los conjuntos finales concatenando las listas del mismo tipo y, nuevamente, los desordenamos al azar: $$(D_{train}, D_{test}) = (P_{train} \cup N_{train},\ P_{test} \cup N_{test})$$
 \end{enumerate}
 

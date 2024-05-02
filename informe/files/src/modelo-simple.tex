@@ -2,7 +2,7 @@
 
 Como punto de partida para nuestro análisis, vamos a entrenar un \textit{árbol de decisión} simple sobre los datos de entrenamiento. De esta manera, tendremos un piso respecto a la performance que podemos esperar de cualquier modelo a entrenar. Con \textit{simple} nos referimos a un modelo de poca complejidad, que sea fácilmente interpretable y propenso a subestimar por contar con un sesgo inductivo alto\footnote{En otras palabras, cuyo espacio de hipótesis sea sencillo.}. De manera concreta, el árbol a entrenar tendrá una profundidad máxima de $3$ niveles y usará los hiperparámetros por defecto de la biblioteca \textit{scikit-learn}\footnote{Luego, las hipótesis representables tendrán la forma de conjunciones de a lo sumo tres comparaciones, donde cada comparación evalúa algún umbral para algún atributo particular de las instancias.} para el \textit{DecisionTreeClassifier}.
 
-Para estimar la performance del modelo utilizaremos $5$-fold cross validation estratificado\footnote{Ver la función \textit{cross\_val} en el notebook adjunto. Usamos el splitter \textit{StratifiedKFold} de \textit{scikit-learn}, con \textit{random\_state} $= s$. Para procurar que la comparación entre métricas sea justa, se reseteó el \textit{random\_state} entre corridas.} sobre $D_{train}$, para las métricas de \textit{accuracy}, \textit{aucroc} y \textit{auprc}. Mediremos la performance en entrenamiento y validación por split. También, tomaremos el promedio $\bar\phi$ en ambos casos y, para validación, realizaremos el cálculo del score global\footnote{Notar que todo $D_{train}$ fue parte del set de validación para alguna iteración de cross-validation. Luego, podemos calcular $$\Phi = metrica(\bigcup_{i=1}^5\text{Predict}(M^{(i)}, X_{cv_{validation}}^{(i)}), y_{train})$$ para estimar la performance del modelo sin recurrir a promedios.} $\Phi$.
+Para estimar la performance del modelo utilizaremos $5$-fold cross validation estratificado\footnote{Ver la función \textit{cross\_val} en el notebook adjunto. Usamos el splitter \textit{StratifiedKFold} de \textit{scikit-learn}, con \textit{random\_state} $= s$. Para procurar que la comparación entre métricas sea justa, se reseteó el \textit{random\_state} entre corridas.} sobre $D_{train}$, para las métricas de \textit{accuracy}, \textit{aucroc} y \textit{auprc}. Mediremos la performance en entrenamiento y validación por split. También, tomaremos el promedio $\bar\phi$ en ambos casos y, para validación, realizaremos el cálculo del score global\footnote{Notar que todo $D_{train}$ fue parte del set de validación para alguna iteración de cross validation. Luego, podemos calcular $$\Phi = metrica(\bigcup_{i=1}^5\text{Predict}(M^{(i)}, X_{cv_{validation}}^{(i)}), y_{train})$$ para estimar la performance del modelo sin recurrir a promedios.} $\Phi$.
 
 % \vspace{0.5em}
 % \begin{enumerate}
@@ -64,7 +64,7 @@ $\Phi$      & -         & $0.6904$      & -         & $0.4810$      & -         
 
 Tal vez no sorprendentemente, desde el punto de vista de \textit{aucroc}, el modelo funciona apenas un poco mejor que tomar una decisión aleatoria.
 
-Es interesante notar que \textit{accuracy} obtuvo un valor más alto que \textit{auprc} y \textit{aucroc} en validación. Esto puede dar cuenta de la incapacidad de \textit{accuracy} para capturar el efecto de los distintos tipos de errores en un problema con clases desbalanceadas. También, parece interesante que tanto \textit{accuracy} como \textit{auprc} obtuvieron en validación resultados más variados que \textit{aucroc}. \textit{auprc} varió hasta un $\approx 20\%$ entre splits.
+Es interesante notar que \textit{accuracy} obtuvo un valor más alto que \textit{auprc} y \textit{aucroc} en validación. Esto puede dar cuenta de la incapacidad de \textit{accuracy} para capturar el efecto de los distintos tipos de errores en un problema con clases desbalanceadas. También, parece interesante que tanto \textit{accuracy} como \textit{auprc} obtuvieron en validación resultados más variados que \textit{aucroc}: \textit{auprc} varió hasta un $\approx 20\%$ entre splits.
 
 Un detalle importante en la interpretación de estos resultados, creemos, es la importancia sobre la decisión de \textit{cuál es la clase positiva}. En particular, \textit{auprc} está sesgado hacia el comportamiento de esta clase, mientras que \textit{aucroc} es más imparcial \cite{Saito}. 
 
@@ -73,7 +73,7 @@ Un detalle importante en la interpretación de estos resultados, creemos, es la 
 
 Dados los resultados, parece interesante explorar otros hiperparámetros para estimar qué tan capaces pueden llegar a ser los \textit{árboles de decisión} para el problema bajo estudio. Para ello, realizaremos una primer búsqueda en cuadrícula con algunos hiperparámetros provistos por la cátedra. En la próxima sección lo complementaremos con una búsqueda aleatoria más extensiva.
 
-En este caso, evaluaremos las combinaciones de hiperparámetros que titulan la Figura \ref{grid_search}, aplicando $5$-fold cross-validation estratificado con métrica \textit{accuracy} promedio\footnote{Por decisión de la cátedra para este ejercicio.}.
+En este caso, evaluaremos las combinaciones de hiperparámetros que titulan la Figura \ref{grid_search}, aplicando $5$-fold cross validation estratificado con métrica \textit{accuracy} promedio\footnote{Por decisión de la cátedra para este ejercicio.}.
 
 \vspace{0.5em}
 \begin{figure}[!htbp]
@@ -91,7 +91,7 @@ En este caso, evaluaremos las combinaciones de hiperparámetros que titulan la F
         \hline
         \end{tabular}
     \end{center}
-    \caption{\textit{Accuracy} promedio resultante de realizar $5$-fold cross-validation estratificado, para \textit{árboles de decisión} con distintos hiperparámetros.} \label{grid_search}
+    \caption{\textit{Accuracy} promedio resultante de realizar $5$-fold cross validation estratificado, para \textit{árboles de decisión} con distintos hiperparámetros.} \label{grid_search}
 \end{figure}
 
 La figura \ref{grid_search} muestra los resultados obtenidos. Podemos ver una clara tendencia a sobreajustar a medida que aumenta la altura máxima permitida. Por su parte, el criterio Gini obtuvo mejores resultados que Entropía en todas las instancias de evaluación. Algo que llama la atención es que un aumento modesto en la altura máxima permitida (de $3$ a $5$ niveles) causó una mejora en evaluación al usar el criterio Gini, pero una pérdida en el caso de Entropía.

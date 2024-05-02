@@ -1,6 +1,6 @@
 Evaluados los distintos algoritmos, pasamos ahora a inspeccionar los mejores modelos encontrados para los clasificadores \textit{árboles de decisión}, \textit{linear discriminant analysis} y \textit{support vector machines}. En cada caso, vamos a buscar entender el comportamiento del algoritmo en función de aquellos hiperparámetros que regulan su complejidad; trazaremos curvas de aprendizaje, y sacaremos conclusiones en términos del sesgo y la varianza. Por último, dado que puede resultar de interés evaluar la aplicación de métodos de \textit{bagging}, vamos a realizar el mismo tipo de análisis para un modelo basado en \textit{random forests}.
 
-El análisis se realizará de la siguiente forma: en base a las configuraciones obtenidas durante la etapa de búsqueda para cada clasificador, vamos a entrenar y evaluar una serie de nuevos modelos variando, por un lado, uno de sus hiperparámetros\footnote{En un rango relevante al mismo.} y, por el otro, la cantidad de datos\footnote{En el rango $[30, n]$ de a pasos de $10$.} de entrenamiento\footnote{Aclaramos que esta variación se realizó de manera acumulativa. Es decir, entre dos cantidades de datos consecutivas, sus correspondientes datasets $A$ y $B$ satisfacen $A \subset B$.}. La evaluación, igual que antes, se realizará por medio de $5$-fold cross-validation estratificado.
+El análisis se realizará de la siguiente forma: en base a las configuraciones obtenidas durante la etapa de búsqueda para cada clasificador, vamos a entrenar y evaluar una serie de nuevos modelos variando, por un lado, uno de sus hiperparámetros\footnote{En un rango relevante al mismo.} y, por el otro, la cantidad de datos\footnote{En el rango $[50, n]$ de a pasos de $10$.} de entrenamiento\footnote{Aclaramos que esta variación se realizó de manera acumulativa. Es decir, entre dos cantidades de datos consecutivas, sus correspondientes datasets $A$ y $B$ satisfacen $A \subset B$.}. La evaluación, igual que antes, se realizará por medio de $5$-fold cross validation estratificado.
 
 \subsection{Árboles de decisión}
 Utilizando la configuración del modelo obtenido en la Figura \ref{random_tree}, generamos las curvas de complejidad ---sobre la \textit{altura máxima}--- y aprendizaje presentadas en la Figura \ref{decisionTreeComplexity}.  
@@ -13,7 +13,7 @@ Podemos apreciar que durante la búsqueda aleatoria, la combinación con \textit
     \centering
     \includegraphics[width=0.4955\textwidth]{/files/src/.media/decisionTreeComplexity.png}
     \includegraphics[width=0.4955\textwidth]{/files/src/.media/decisionTreeLearning.png}
-    \caption{Clasificador \textit{decision tree}. Izquierda: Curvas de complejidad mostrando la variación del \textit{aucroc} a medida que se aumenta la \textit{profundidad máxima}. Derecha: Curvas de aprendizaje mostrando la variación del \textit{aucroc} a medida que se aumenta el tamaño del dataset.}
+    \caption{Clasificador \textit{decision tree}. Izquierda: Curvas de complejidad mostrando la variación del \textit{aucroc} a medida que aumenta la \textit{profundidad máxima}. Derecha: Curvas de aprendizaje mostrando la variación del \textit{aucroc} a medida que aumenta el tamaño del dataset.}
     \label{decisionTreeComplexity}
 \end{figure}
 
@@ -32,10 +32,10 @@ A partir de la configuración obtenida en la Figura \ref{lda}, generamos la curv
 \begin{figure}[!htbp]
     \centering
     \includegraphics[width=0.49\textwidth]{/files/src/.media/LDALearning.png}
-    \caption{Clasificador \textit{Linear Discriminant Analisis}. Curvas de aprendizaje mostrando la variación del \textit{aucroc} en datos de entrenamiento y validación a medida que se aumenta la cantidad de datos\protect\footnotemark.}
+    \caption{Clasificador \textit{Linear Discriminant Analisis}. Curvas de aprendizaje mostrando la variación del \textit{aucroc} en datos de entrenamiento y validación a medida que aumenta la cantidad de datos\protect\footnotemark.}
     \label{LDALearning}
 \end{figure}
-\footnotetext{Dado que durante la construcción de las curvas de aprendizaje se aumenta la cantidad de datos de entrenamiento, no nos pareció correcto resetear el \textit{random\_state} en el proceso de $5$-fold cross-validation estratificado que produce cada medición. Luego, los resultados pueden diferir un poco con respecto a los obtenidos durante la búsqueda aleatoria.}
+\footnotetext{Dado que durante la construcción de las curvas de aprendizaje aumenta la cantidad de datos de entrenamiento, no nos pareció correcto resetear el \textit{random\_state} en el proceso de $5$-fold cross validation estratificado que produce cada medición. Luego, los resultados pueden diferir un poco con respecto a los obtenidos durante la búsqueda aleatoria.}
 
 Podemos apreciar que el modelo posee un sesgo bajo, teniendo en cuenta que su performance se estabiliza cerca del valor $0.87$ para validación, al contar con más de $200$ datos, y de $0.95$ para entrenamiento. Esto refleja que el modelo deja de aprender y, en consecuencia, contar con más datos no debería beneficiarlo significativamente. Como detalle interesante, notamos que el mejor valor de \textit{aucroc} luego de estabilizarse fue de $0.88$ para $250$ datos.
 
@@ -49,7 +49,7 @@ Basándonos en la mejor configuración de hiperparámetros hallada (ver la Figur
     \centering
     \includegraphics[width=0.49\textwidth]{/files/src/.media/SVMComplexity.png}
     \includegraphics[width=0.49\textwidth]{/files/src/.media/SVMLearning.png}
-    \caption{Clasificador \textit{SVM}. Izquierda: Curvas de complejidad mostrando la variación del \textit{aucroc} a medida que se aumenta \textit{C}. Derecha: Curvas de aprendizaje mostrando la variación de la medida respecto al tamaño del dataset.}
+    \caption{Clasificador \textit{SVM}. Izquierda: Curvas de complejidad mostrando la variación del \textit{aucroc} a medida que aumenta \textit{C}. Derecha: Curvas de aprendizaje mostrando la variación de la medida respecto al tamaño del dataset.}
     \label{SVMCurves}
 \end{figure}
 
@@ -59,26 +59,47 @@ Por su parte, la curva de aprendizaje en la Figura \ref{svm} nos permite determi
 
 A partir de esta cantidad, se asienta un sesgo mediano, visible en la diferencia entre la curva de aprendizaje de entrenamiento y aquella de validación. El hecho que esta primer curva nunca baje de un valor de $1$ da indicios de una posible tendencia del modelo a sobreajustar. 
 
-\subsection{Random forests}
+\subsection{Random forests} Como última instancia de análisis, vamos a explorar el comportamiento de un modelo sustentado en técnicas de \textit{bagging}. Las mismas garantizan mayor robustez respecto a la varianza, a cuestas de un mayor costo computacional en el entrenamiento. 
 
-Primero realizamos un Random Search para encontrar hiperparámetros decentes para Criterion y para maxdepth. Luego realizamos una curva de complejidad variando el maxfeatures, que nos serviría para entender como afecta este hiperparámetro a la performance del Algoritmo. 
+Al igual que en la Sección \ref{algoritmos}, realizamos un búsqueda aleatoria para encontrar configuraciones decentes. Consideramos los siguientes hiperparámetros y rangos:
 
+\begin{itemize}
+    \item El criterio de corte: permitimos todos los criterios implementados por el algoritmo. Estos son \textit{Gini}, \textit{Entropy} y \textit{Log loss}. 
+    \item La profundidad máxima: permitimos que varíe en el rango $[1,\ 4]$ de manera uniforme, dado que este rango obtuvo buenos resultados para \textit{árboles de decisión} y conlleva un menor costo computacional en el entrenamiento.
+    \item La cantidad de atributos máxima a considerar por corte: permitimos que varíe de manera uniforme sobre $[1, p]$.
+\end{itemize}
+
+La Figura \ref{random_forest} muestra los mejores hiperparámetros obtenidos. Con esta configuración, procedimos a construir las curvas de complejidad ---variando la cantidad máxima de atributos--- y de aprendizaje presentadas en la Figura \ref{RF}.
+
+\vspace{0.5em}
+\begin{figure}[!htbp]
+    \begin{center}
+        \begin{tabular}{ |c|c|c|c| } 
+         \hline
+        Altura Máxima   & Criterio de corte & Atributos Máximos  & aucroc (validación) \\
+        \hline
+        $2$	            & \textit{Log loss} & $33$	            & $0.8117$\\
+        \hline	 
+        \end{tabular}
+    \end{center}
+    \caption{mejor resultado para la búsqueda aleatoria de hiperparámetros en el caso de \textit{random forests}.} \label{random_forest}
+\end{figure}
+
+\vspace{0.5em}
 \begin{figure}[!htbp]
     \centering
     \includegraphics[width=0.49\textwidth]{/files/src/.media/randomForestComplejidad.png}
     \includegraphics[width=0.49\textwidth]{/files/src/.media/randomForestAprendizaje.png}
-    \caption{Clasificador \textit{Random Forest}. Izquierda: Curvas de complejidad mostrando la variación del \textit{aucroc} a medida que se aumenta \textit{maxFeatures}. Derecha: Curvas de aprendizaje mostrando la variación del \textit{aucroc} a medida que se aumenta el tamaño del dataset.}
+    \caption{Clasificador \textit{Random forests}. Izquierda: Curvas de complejidad mostrando la variación del \textit{aucroc} a medida que aumenta la cantidad máxima de atributos. Derecha: Curvas de aprendizaje mostrando la variación del \textit{aucroc} a medida que aumenta el tamaño del dataset.}
     \label{RF}
 \end{figure}
 
-La figura \ref{RF} nos muestra algo que tiene sentido que es que cuando maxfeatures es muy bajo genera un impacto negativo en la performance del algoritmo. Esto tiene sentido ya que maxfeatures representa la cantidad de atributos tomados de manera aleatoria que cada decision tree que compone el forest va a considerar en cada paso del algoritmo. Es lógico que si considerás muy pocos atributos para realizar los cortes no encuentres buenas opciones y por lo tanto tengas un modelo defectuoso.
+Respecto a la curva de complejidad, observamos ---no sorprendentemente--- que un valor bajo en la cantidad máxima de atributos permitidos genera un impacto negativo en la performance del algoritmo. Esto tiene sentido, ya que éste hiperparámetro guía cuántos atributos cada árbol de decisión va a poder utilizar al evaluar cortes. Está claro que, a menor cantidad de atributos a considerar, menor la posibilidad de encontrar un buen corte.
 
-Por otro lado, la figura nos muestra otro resultado que no es tan intuitivo, que es que maxfeatures rápidamente alcanza su límite en el impacto en la performance y luego a medida que sigue aumentando, incluso pareciera decrecer ligeramente. Este resultado es particularmente atractivo, ya que si bien a medida que crece no mejora considerablemente la performance, si afecta directamente el costo computacional. 
+Sin embargo, la curva nos muestra otro resultado que es menos intuitivo: la cantidad máxima de atributos permitidos rápidamente alcanza su límite repecto a su capacidad de impactar en la performance del modelo. Luego, a medida que sigue aumentando, incluso parece disminuir ligeramente. Esto es particularmente atractivo, ya que, si bien a medida que crece la performance no mejora considerablemente, sí afecta directamente en el costo computacional. Una posible explicación para este fenómeno es que mientras más atributos se consideren en cada corte, menos variabilidad vamos a encontrar entre los árboles que componen al bosque. Es decir, los árboles resultantes van a ser más parecidos entre sí, por lo que no van a poder complementarse mutuamente.  
 
-La posible explicación para porque puede ser contraproducente tener un maxfeatures muy alto es que mientras más atributos se consideren en cada corte, menos variabilidad vamos a encontrar entre los árboles que componen el bosque. Es decir, los árboles resultantes van a ser más parecidos entre sí, lo cual genera un \textit{overfitting} de los datos.  
+Por un lado, vimos en la búsqueda aleatoria que un valor de $33$ arrojó los mejores resultados. Consideramos que tendría sentido usar un valor como $\log(p)$ o $\sqrt{p}$ para lograr un buen \textit{trade-off} entre performance y complejidad computacional, manteniendo la dependencia respecto a la cantidad de atributos.   
 
-Concluimos que tiene sentido tomar logaritmo o sqrt de la cantidad de atributos de los datos para mantener maxfeatures dependiente de la cantidad de atributos, pero que sea realativamente bajo para tener una buena performance y minimizar la complejidad computacional.  
+Por otro lado, la curva de aprendizaje de la Figura \ref{RF} muestra que a partir de $200$ datos la performance del modelo parece estabilizarse, sin poder discernir niguna tendencia alcista. Concluimos que la cantidad de datos provista es suficiente para generar un modelo decente basado en \textit{random forests}. 
 
-Por otro lado, graficamos una curva de aprendizaje (Figura \ref{RF}) para determinar si sería útil o no conseguir más datos. Lo que observamos a partir de la figura, es que a partir de 200 datos la performance del algoritmo parece mantenerse constante sin notar una tendencia alcista. Concluimos que la cantidad de datos provista es suficiente como para generar un modelo decente basado en random forest. 
-
-Algo interesante a destacar de la curva de aprendizaje del random forest es que las barras de error son consistentemente pequeñas a medida que se aumentan los datos. 
+Algo interesante a destacar es que la desviación estándar se vuelve chica para modelos entrenados con suficientes datos, lo que implica una menor varianza del modelo. A su vez, la brecha entre las curvas de entrenamiento y validación en el gráfico de aprendizaje da cuenta de un leve sesgo del modelo.

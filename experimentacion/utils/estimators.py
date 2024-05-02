@@ -32,8 +32,10 @@ class EstimatorWrapper(ABC):
         """
         pass
 
-    def clone(self) -> Self:
-        return type(self)(**self.estimator.get_params())
+    def clone(self, **params) -> Self:
+        kwargs = self.estimator.get_params()
+        kwargs.update(params)
+        return type(self)(**kwargs)
 
 
 class DecisionTreeWrapper(EstimatorWrapper):
